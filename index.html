@@ -612,7 +612,7 @@
       btn.textContent = opt.label;
       btn.addEventListener("click", () => {
         fstate.confirmStrategy = opt.value;
-        renderControls();
+        refreshSelectedUI();
         updateOutputs();
       });
       cGrid.appendChild(btn);
