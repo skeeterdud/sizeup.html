@@ -579,6 +579,7 @@
     // Immediate safety concerns (bold label)
     const safLabel = document.createElement("span");
     safLabel.className = "boldLabel";
+    safLabel.style.margin ="12px 0 10px 0";
     safLabel.textContent = "Immediate safety concerns";
     block.appendChild(safLabel);
 
@@ -730,7 +731,7 @@
     cmd.appendChild(stratGrid);
 
     const cmdLabel = document.createElement("div");
-    cmdLabel.style.margin = "0 0 10px 0";
+    cmdLabel.style.margin = "boldLabel" "12px 0 10px 0";
     cmdLabel.textContent = "Command";
     cmd.appendChild(cmdLabel);
 
