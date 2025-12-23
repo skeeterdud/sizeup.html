@@ -93,17 +93,12 @@
       letter-spacing:.5px;
       text-transform:uppercase;
       color: var(--text);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
     }
 
     .sec1{ background: var(--sec1); }
     .sec2{ background: var(--sec2); }
     .sec3{ background: var(--sec3); }
 
-    /* Layout helpers */
     .twoCol{
       display:grid;
       grid-template-columns:1fr 1fr;
@@ -113,7 +108,6 @@
       .twoCol{grid-template-columns:1fr;}
     }
 
-    /* Dropdowns (Batt + Apparatus) */
     .selectRow{
       display:grid;
       grid-template-columns:1fr 1fr;
@@ -123,7 +117,6 @@
       .selectRow{grid-template-columns:1fr;}
     }
 
-    /* Group headings */
     .groupHead{
       margin: 0 0 10px 0;
       font-weight: 900;
@@ -146,7 +139,7 @@
       background:#ffffff;
       color:var(--text);
       font-size:15px;
-      font-weight:800;
+      font-weight:900;
       box-shadow:0 6px 16px rgba(0,0,0,.10);
     }
 
@@ -161,7 +154,6 @@
       box-shadow:0 6px 16px rgba(0,0,0,.10);
     }
 
-    /* Buttons (4 across) */
     .grid{
       display:grid;
       grid-template-columns:repeat(4,minmax(0,1fr));
@@ -181,7 +173,7 @@
       padding:12px 10px;
       border-radius:12px;
       font-size:15px;
-      font-weight:900;
+      font-weight:1000;
       cursor:pointer;
       user-select:none;
       touch-action:manipulation;
@@ -194,7 +186,6 @@
       box-shadow:0 10px 22px rgba(37,99,235,.22);
     }
 
-    /* Output boxes */
     .outputTitle{margin:0 0 10px 0;}
     .outputTitle b{color:#e9eefc;font-size:14px}
 
@@ -248,95 +239,30 @@
       border-color: rgba(193,18,31,.55);
       background: rgba(193,18,31,.18);
     }
-
-    /* Edit Mode UI */
-    .editBar{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin:0 0 10px 0;
-    }
-    .editChip{
-      border:1px solid rgba(0,0,0,.12);
-      background:rgba(255,255,255,.7);
-      color:var(--text);
-      padding:8px 10px;
-      border-radius:12px;
-      font-weight:1000;
-      cursor:pointer;
-    }
   </style>
 </head>
 
 <body>
 <header>
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
-    <div>
-      <h1 style="margin:0;">MFD Size-Up Builder</h1>
-      <div class="hint">Tap selections → paragraphs update → Copy.</div>
-    </div>
-    <button class="btn primary" id="editBtn" style="min-width:110px;">Edit</button>
+  <div>
+    <h1>MFD Size-Up Builder</h1>
+    <div class="hint">Tap selections → paragraphs update → Copy.</div>
   </div>
 </header>
 
 <div class="wrap">
-
-  <!-- SECTION 1: Your Apparatus -->
-  <div class="card">
-    <div class="section sec1" id="section1"></div>
-  </div>
-
-  <!-- SECTION 2: IRR (includes generated size-up) -->
-  <div class="card">
-    <div class="section sec2" id="section2"></div>
-  </div>
-
-  <!-- SECTION 3: Follow Up Report (includes generated follow-up) -->
-  <div class="card">
-    <div class="section sec3" id="section3"></div>
-  </div>
-
+  <div class="card"><div class="section sec1" id="section1"></div></div>
+  <div class="card"><div class="section sec2" id="section2"></div></div>
+  <div class="card"><div class="section sec3" id="section3"></div></div>
 </div>
 
 <script>
-  // Offline cache
+  // If you have a service-worker.js and it causes caching headaches,
+  // comment out the next block while testing.
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));
   }
 
-  // ===== Edit Mode (PIN protected) =====
-  const EDIT_PIN = "535"; // change if you want
-  let editMode = false;
-
-  function updateEditButton(){
-    const btn = document.getElementById("editBtn");
-    if (!btn) return;
-    btn.textContent = editMode ? "Done" : "Edit";
-  }
-
-  function requestEditModeToggle(){
-    if (editMode) {
-      editMode = false;
-      updateEditButton();
-      renderAll();
-      return;
-    }
-    const entered = prompt("Enter Edit PIN:");
-    if (entered === null) return;
-    if (entered.trim() === EDIT_PIN) {
-      editMode = true;
-      updateEditButton();
-      renderAll();
-    } else {
-      alert("Incorrect PIN.");
-    }
-  }
-
-  // ===== Config persistence (device/browser) =====
-  const CONFIG_STORAGE_KEY = "mfd_sizeup_config_v2";
-  const FOLLOW_STORAGE_KEY = "mfd_follow_config_v2";
-
-  // ---------- IRR Groups (buttons) ----------
   const CONFIG = [
     { key:"buildingSize", title:"Building Size", mode:"single", options:[
       { value:"Small",  label:"Small",  phrase:"Small" },
@@ -391,14 +317,12 @@
     ]}
   ];
 
-  // Section 1 dropdown data (Your Apparatus)
   const BATTALIONS = ["", "BC1", "BC2"];
   const APPARATUS = ["",
     "Trk 1","Eng 2","Trk 3","Eng 4","Trk 5","Eng 6","Eng 7","Trk 9","Eng 10","Trk 11",
     "Med 1","Med 2","Med 3","Med 5","Med 6","Med 7","Med 9","Med 10","Med 11"
   ];
 
-  // ---------- Follow-up groups ----------
   const FOLLOW = [
     { key:"r360", title:"Results of the 360", mode:"single", options:[
       { value:"Completed", label:"Completed", phrase:"Completed" },
@@ -414,58 +338,19 @@
     ]}
   ];
 
-  function saveConfig(){
-    try { localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(CONFIG)); } catch(e) {}
-    try { localStorage.setItem(FOLLOW_STORAGE_KEY, JSON.stringify(FOLLOW)); } catch(e) {}
-  }
-
-  function loadConfig(){
-    try{
-      const raw = localStorage.getItem(CONFIG_STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) {
-          CONFIG.length = 0;
-          parsed.forEach(x => CONFIG.push(x));
-        }
-      }
-    }catch(e){}
-
-    try{
-      const raw2 = localStorage.getItem(FOLLOW_STORAGE_KEY);
-      if (raw2) {
-        const parsed2 = JSON.parse(raw2);
-        if (Array.isArray(parsed2)) {
-          FOLLOW.length = 0;
-          parsed2.forEach(x => FOLLOW.push(x));
-        }
-      }
-    }catch(e){}
-  }
-
-  // ---------- State ----------
   const state = {};
   const fstate = {};
 
-  // Outputs references (created during render)
   let outputBox = null;
   let followOutputBox = null;
 
-  function init(){
-    loadConfig();
-    document.getElementById("editBtn").addEventListener("click", requestEditModeToggle);
-    updateEditButton();
-    renderAll();
-  }
-
-  // ---------- Interaction ----------
   function onChoice(group, value){
     if (group.mode === "single") state[group.key] = value;
     else {
       const current = Array.isArray(state[group.key]) ? state[group.key] : [];
       state[group.key] = current.includes(value) ? current.filter(v => v !== value) : [...current, value];
     }
-    renderAll(false); // re-render to update selected UI
+    renderAll(false);
     updateOutputs();
   }
 
@@ -475,30 +360,8 @@
     updateOutputs();
   }
 
-  // ---------- Render helpers ----------
   function renderButtonGroup(group, parentEl){
     if (!group) return;
-
-    if (editMode) {
-      const bar = document.createElement("div");
-      bar.className = "editBar";
-
-      const add = document.createElement("button");
-      add.className = "editChip";
-      add.textContent = "➕ Add Button";
-      add.addEventListener("click", () => {
-        const label = prompt(`Add a new button to: ${group.title}\nButton label:`);
-        if (!label) return;
-        const phrase = prompt("Optional phrase for the paragraph (leave blank to use label):") || "";
-        const value = label.trim();
-        group.options.push({ value, label: label.trim(), phrase: (phrase.trim() || label.trim()) });
-        saveConfig();
-        renderAll();
-      });
-
-      bar.appendChild(add);
-      parentEl.appendChild(bar);
-    }
 
     const title = document.createElement("div");
     title.className = "groupHead";
@@ -520,7 +383,6 @@
 
     parentEl.appendChild(grid);
 
-    // Occupancy Other input directly under occupancy
     if (group.key === "occupancy" && state.occupancy === "other") {
       const label = document.createElement("label");
       label.textContent = "Occupancy Type";
@@ -537,7 +399,6 @@
       parentEl.appendChild(input);
     }
 
-    // Problem location free-text directly under sides
     if (group.key === "problemSides") {
       const label = document.createElement("label");
       label.textContent = "Location of the Problem";
@@ -557,27 +418,6 @@
 
   function renderFollowGroup(group, parentEl){
     if (!group) return;
-
-    if (editMode) {
-      const bar = document.createElement("div");
-      bar.className = "editBar";
-
-      const add = document.createElement("button");
-      add.className = "editChip";
-      add.textContent = "➕ Add Button";
-      add.addEventListener("click", () => {
-        const label = prompt(`Add a new button to: ${group.title}\nButton label:`);
-        if (!label) return;
-        const phrase = prompt("Optional phrase (leave blank to use label):") || "";
-        const value = label.trim();
-        group.options.push({ value, label: label.trim(), phrase: (phrase.trim() || label.trim()) });
-        saveConfig();
-        renderAll();
-      });
-
-      bar.appendChild(add);
-      parentEl.appendChild(bar);
-    }
 
     const title = document.createElement("div");
     title.className = "groupHead";
@@ -649,14 +489,15 @@
 
   function refreshSelectedUI(){
     document.querySelectorAll("button.choice").forEach(btn => {
-      // IRR buttons
       if (btn.dataset.key) {
         const key = btn.dataset.key;
         const value = btn.dataset.value;
+
         if (key === "strategy") {
           btn.classList.toggle("selected", (state.strategy || "") === value);
           return;
         }
+
         const group = CONFIG.find(g => g.key === key);
         if (!group) return;
         const current = state[key];
@@ -665,7 +506,7 @@
           : Array.isArray(current) && current.includes(value);
         btn.classList.toggle("selected", selected);
       }
-      // follow-up buttons
+
       if (btn.dataset.fkey) {
         const k = btn.dataset.fkey;
         const v = btn.dataset.fvalue;
@@ -674,29 +515,18 @@
     });
   }
 
-  // ---------- Build Sections ----------
   function renderSection1(){
     const s1 = document.getElementById("section1");
     s1.innerHTML = "";
-
-    const title = document.createElement("div");
-    title.className = "sectionTitle";
-    title.textContent = "Section 1 — Your Apparatus";
-    s1.appendChild(title);
-
+    s1.innerHTML = `<div class="sectionTitle">Section 1 — Your Apparatus</div>`;
     renderDropdowns(s1);
   }
 
   function renderSection2(){
     const s2 = document.getElementById("section2");
     s2.innerHTML = "";
+    s2.innerHTML = `<div class="sectionTitle">Section 2 — IRR</div>`;
 
-    const title = document.createElement("div");
-    title.className = "sectionTitle";
-    title.textContent = "Section 2 — IRR";
-    s2.appendChild(title);
-
-    // Top row: Building Size (left) / Condition (right)
     const top = document.createElement("div");
     top.className = "twoCol";
 
@@ -705,7 +535,6 @@
     left.style.border = "1px solid rgba(0,0,0,.10)";
     left.style.borderRadius = "16px";
     left.style.padding = "12px";
-
     renderButtonGroup(CONFIG.find(g => g.key==="buildingSize"), left);
     renderButtonGroup(CONFIG.find(g => g.key==="height"), left);
     renderButtonGroup(CONFIG.find(g => g.key==="occupancy"), left);
@@ -715,7 +544,6 @@
     right.style.border = "1px solid rgba(0,0,0,.10)";
     right.style.borderRadius = "16px";
     right.style.padding = "12px";
-
     renderButtonGroup(CONFIG.find(g => g.key==="conditions"), right);
     renderButtonGroup(CONFIG.find(g => g.key==="problemSides"), right);
 
@@ -723,7 +551,6 @@
     top.appendChild(right);
     s2.appendChild(top);
 
-    // Second row: IAP (left) / Strategy/Command (right)
     const mid = document.createElement("div");
     mid.className = "twoCol";
     mid.style.marginTop = "12px";
@@ -737,9 +564,6 @@
     const iapTitle = document.createElement("div");
     iapTitle.className = "sectionTitle";
     iapTitle.style.fontSize = "13px";
-    iapTitle.style.textTransform = "uppercase";
-    iapTitle.style.letterSpacing = ".5px";
-    iapTitle.style.marginBottom = "8px";
     iapTitle.textContent = "Initial Action Plan";
     iapBox.appendChild(iapTitle);
 
@@ -756,13 +580,9 @@
     const scTitle = document.createElement("div");
     scTitle.className = "sectionTitle";
     scTitle.style.fontSize = "13px";
-    scTitle.style.textTransform = "uppercase";
-    scTitle.style.letterSpacing = ".5px";
-    scTitle.style.marginBottom = "8px";
     scTitle.textContent = "Strategy / Command";
     stratCmdBox.appendChild(scTitle);
 
-    // Strategy buttons
     const stratHead = document.createElement("div");
     stratHead.className = "groupHead";
     stratHead.textContent = "Strategy";
@@ -785,7 +605,6 @@
     });
     stratCmdBox.appendChild(stratGrid);
 
-    // Command (styled like Strategy)
     const cmdHead = document.createElement("div");
     cmdHead.className = "groupHead";
     cmdHead.textContent = "Command";
@@ -805,7 +624,6 @@
     mid.appendChild(stratCmdBox);
     s2.appendChild(mid);
 
-    // Generated Size Up output (inside Section 2)
     const outWrap = document.createElement("div");
     outWrap.style.marginTop = "12px";
     outWrap.innerHTML = `
@@ -823,13 +641,8 @@
   function renderSection3(){
     const s3 = document.getElementById("section3");
     s3.innerHTML = "";
+    s3.innerHTML = `<div class="sectionTitle">Section 3 — Follow Up Report</div>`;
 
-    const title = document.createElement("div");
-    title.className = "sectionTitle";
-    title.textContent = "Section 3 — Follow Up Report";
-    s3.appendChild(title);
-
-    // Follow-up controls
     const followBox = document.createElement("div");
     followBox.style.background = "rgba(255,255,255,.55)";
     followBox.style.border = "1px solid rgba(0,0,0,.10)";
@@ -839,9 +652,6 @@
     const fTitle = document.createElement("div");
     fTitle.className = "sectionTitle";
     fTitle.style.fontSize = "13px";
-    fTitle.style.textTransform = "uppercase";
-    fTitle.style.letterSpacing = ".5px";
-    fTitle.style.marginBottom = "8px";
     fTitle.textContent = "Follow Up Report";
     followBox.appendChild(fTitle);
 
@@ -896,7 +706,6 @@
 
     s3.appendChild(followBox);
 
-    // Generated Follow-up output (inside Section 3)
     const outWrap = document.createElement("div");
     outWrap.style.marginTop = "12px";
     outWrap.innerHTML = `
@@ -914,21 +723,14 @@
     outputBox = document.getElementById("outputBox");
     followOutputBox = document.getElementById("followOutputBox");
 
-    const copyBtn = document.getElementById("copyBtn");
-    const clearSize = document.getElementById("clearSizeupBtn");
-    const printBtn = document.getElementById("printBtn");
+    document.getElementById("copyBtn")?.addEventListener("click", () => copyFrom(outputBox, "Copied size-up!"));
+    document.getElementById("clearSizeupBtn")?.addEventListener("click", clearSizeup);
+    document.getElementById("printBtn")?.addEventListener("click", printPDF);
 
-    if (copyBtn) copyBtn.addEventListener("click", () => copyFrom(outputBox, "Copied size-up!"));
-    if (clearSize) clearSize.addEventListener("click", clearSizeup);
-    if (printBtn) printBtn.addEventListener("click", printPDF);
-
-    const copyFollow = document.getElementById("copyFollowBtn");
-    const clearFollowBtn = document.getElementById("clearFollowBtn");
-    if (copyFollow) copyFollow.addEventListener("click", () => copyFrom(followOutputBox, "Copied follow-up!"));
-    if (clearFollowBtn) clearFollowBtn.addEventListener("click", clearFollow);
+    document.getElementById("copyFollowBtn")?.addEventListener("click", () => copyFrom(followOutputBox, "Copied follow-up!"));
+    document.getElementById("clearFollowBtn")?.addEventListener("click", clearFollow);
   }
 
-  // Render all sections. If full=true, also rewires buttons.
   function renderAll(full=true){
     renderSection1();
     renderSection2();
@@ -938,7 +740,6 @@
     updateOutputs();
   }
 
-  // ---------- Text building ----------
   function optionPhrase(groupKey, value){
     const group = CONFIG.find(g => g.key === groupKey);
     if (!group) return "";
@@ -967,17 +768,18 @@
   function updateOutputs(){
     if (!outputBox || !followOutputBox) return;
 
-    // SIZE-UP
     const battalion = (state.battalion || "").trim();
     const apparatus = (state.apparatus || "").trim();
 
     const bSize = (state.buildingSize || "").trim();
     const bHeight = singlePhrase("height");
+
     let occ = "";
     if (state.occupancy === "other") occ = (state.occupancyOther || "").trim();
     else if (state.occupancy) occ = optionPhrase("occupancy", state.occupancy);
 
     const condition = singlePhrase("conditions");
+
     const sides = multiList("problemSides");
     const sidesText = sides.length ? niceSidesDisplay(sides) : "";
     const locFree = (state.problemLocationText || "").trim();
@@ -1017,7 +819,7 @@
 
     outputBox.textContent = [line1, line2, line3].join("\n\n");
 
-    // FOLLOW-UP
+    // Follow-up
     const r360 = (fstate.r360 || "").trim();
     const additional = (fstate.additional || "").trim();
     const safety = (fstate.safety || "").trim();
@@ -1036,7 +838,6 @@
     followOutputBox.textContent = lines.join("\n");
   }
 
-  // ---------- Buttons ----------
   async function copyFrom(el, msg){
     const text = el?.textContent || "";
     try{
@@ -1063,7 +864,6 @@
     renderAll();
   }
 
-  // Print/PDF of just the generated paragraphs
   function escapeHtml(str){
     return (str || "")
       .replaceAll("&","&amp;")
@@ -1122,7 +922,7 @@
     w.document.close();
   }
 
-  init();
+  renderAll();
 </script>
 </body>
 </html>
