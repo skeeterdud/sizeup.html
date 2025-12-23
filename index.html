@@ -600,10 +600,9 @@
     });
     cmd.appendChild(stratGrid);
 
-    const cmdHead = document.createElement("div");
-    cmdHead.className = "groupHead";
-    cmdHead.textContent = "Command";
-    cmd.appendChild(cmdHead);
+    const cmdLabel = document.createElement("label");
+    cmdLabel.textContent = "Command";
+    cmd.appendChild(cmdLabel);
 
     const cmdInput = document.createElement("input");
     cmdInput.type = "text";
@@ -645,11 +644,10 @@
     block.appendChild(addInput);
 
     // Immediate safety concerns (bold label)
-    const safTitle = document.createElement("div");
-   safTitle.className = "groupHead";
-   safTitle.textContent = "Immediate safety concerns";
-   block.appendChild(safTitle);
-
+    const safLabel = document.createElement("span");
+    safLabel.className = "boldLabel";
+    safLabel.textContent = "Immediate safety concerns";
+    block.appendChild(safLabel);
 
     const safInput = document.createElement("input");
     safInput.type = "text";
