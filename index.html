@@ -650,10 +650,11 @@
       btn.dataset.fvalue = opt.value;
       btn.textContent = opt.label;
       btn.addEventListener("click", () => {
-        fstate.resourceDetermination = opt.value;
-        renderControls();
-        updateOutputs();
-      });
+      fstate.resourceDetermination = opt.value;
+      refreshSelectedUI();
+      updateOutputs();
+        });
+
       rGrid.appendChild(btn);
     });
     block.appendChild(rGrid);
@@ -724,10 +725,11 @@
       btn.dataset.value = v;
       btn.textContent = v;
       btn.addEventListener("click", () => {
-        state.strategy = v;
-        renderControls();
-        updateOutputs();
-      });
+      fstate.confirmStrategy = opt.value;
+      refreshSelectedUI();
+      updateOutputs();
+    });
+
       stratGrid.appendChild(btn);
     });
     cmd.appendChild(stratGrid);
