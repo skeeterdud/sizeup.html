@@ -718,22 +718,22 @@
 
     const stratGrid = document.createElement("div");
     stratGrid.className = "grid";
-    ["Offensive","Defensive"].forEach(v => {
+   ["Offensive", "Defensive"].forEach(v => {
       const btn = document.createElement("button");
       btn.className = "choice";
       btn.dataset.key = "strategy";
       btn.dataset.value = v;
       btn.textContent = v;
+    
       btn.addEventListener("click", () => {
-      btn.addEventListener("click", () => {
-      state.strategy = v;
+        state.strategy = v;
         refreshSelectedUI();
         updateOutputs();
       });
-
-
+    
       stratGrid.appendChild(btn);
     });
+
     cmd.appendChild(stratGrid);
 
     const cmdLabel = document.createElement("div");
