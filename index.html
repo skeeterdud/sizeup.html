@@ -752,7 +752,13 @@
     row.appendChild(cmd);
     controlsEl.appendChild(row);
 
-  
+  // Follow-up controls go in their own bordered card (NOT inside #controls)
+const followCard = document.getElementById("followControlsCard");
+if (followCard) {
+  followCard.innerHTML = "";
+  renderFollowBlock(followCard);
+}
+
     refreshSelectedUI();
   }
 
