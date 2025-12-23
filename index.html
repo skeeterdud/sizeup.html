@@ -112,7 +112,7 @@
       letter-spacing:.5px;
       text-transform:uppercase;
       font-weight:900;
-      color:var(--White);
+      color:#ffffff;
     }
 
     .twoCol{
@@ -275,7 +275,7 @@
 <div class="card">
   <div class="outputTitle"><b>Generated Size-Up</b></div>
   <div class="output" id="outputBox"></div>
-  ...
+  
 </div>
 
 <!-- Follow-Up CONTROLS -->
@@ -285,7 +285,7 @@
 <div class="card">
   <div class="outputTitle"><b>Generated Follow-Up Report</b></div>
   <div class="output" id="followOutputBox"></div>
-  ...
+  
 </div>
 
     </div>
@@ -398,11 +398,11 @@
     renderControls();
     updateOutputs();
 
-    document.getElementById("copyBtn").addEventListener("click", () => copyFrom(outputBox, "Copied size-up!"));
-    document.getElementById("clearSizeupBtn").addEventListener("click", clearSizeup);
+    document.("copyBtn").addEventListener("click", () => copyFrom(outputBox, "Copied size-up!"));
+    document.("clearSizeupBtn").addEventListener("click", clearSizeup);
 
-    document.getElementById("copyFollowBtn").addEventListener("click", () => copyFrom(followOutputBox, "Copied follow-up!"));
-    document.getElementById("clearFollowBtn").addEventListener("click", clearFollow);
+    document.("copyFollowBtn").addEventListener("click", () => copyFrom(followOutputBox, "Copied follow-up!"));
+    document.("clearFollowBtn").addEventListener("click", clearFollow);
   }
 
   function onChoice(group, value){
@@ -731,7 +731,9 @@
     cmd.appendChild(stratGrid);
 
     const cmdLabel = document.createElement("div");
-    cmdLabel.style.margin = "boldLabel" "12px 0 10px 0";
+    const cmdLabel = document.createElement("div");
+    cmdLabel.className = "boldLabel";
+    cmdLabel.style.margin = "12px 0 10px 0";
     cmdLabel.textContent = "Command";
     cmd.appendChild(cmdLabel);
 
@@ -865,7 +867,11 @@
     // Controls are above outputs; to match your request visually, we keep follow-up controls below this line:
   
     
-    renderFollowBlock(controlsEl);
+    // add follow-up controls once per render
+renderFollowBlock(controlsEl);
+
+refreshSelectedUI();
+
     
     // ---------- FOLLOW-UP REPORT ----------
     const r360 = (fstate.r360 || "").trim();
