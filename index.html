@@ -19,12 +19,12 @@
       --text:#0b1220;
       --muted: rgba(11,18,32,.75);
 
-      --secOps:#fde68a;
-      --secBuilding:#fecaca;
-      --secProblem:#bbf7d0;
-      --secIAP:#bfdbfe;
-      --secCmd:#ddd6fe;
-      --secFollow:#cffafe;
+      --sec1:#fde68a;  /* Your Apparatus */
+      --sec2:#e0e7ff;  /* IRR wrapper */
+      --sec3:#cffafe;  /* Follow Up wrapper */
+
+      --cardBg: rgba(18,26,43,.75);
+      --cardBorder: rgba(255,255,255,.10);
 
       --wmOpacity: 0.10;
       --wmSize: 820px;
@@ -73,49 +73,37 @@
     }
 
     .card{
-      background: rgba(18,26,43,.75);
-      border: 1px solid rgba(255,255,255,.10);
+      background: var(--cardBg);
+      border: 1px solid var(--cardBorder);
       border-radius:16px;
       padding:12px;
     }
 
-    .block{
-      border-radius:16px;
+    /* Big sections */
+    .section{
+      border-radius:18px;
       padding:12px;
-      border:1px solid rgba(0,0,0,.10);
-      color:var(--text);
+      border:1px solid rgba(0,0,0,.12);
+      color: var(--text);
     }
-    .block h2{
+    .sectionTitle{
       margin:0 0 10px 0;
-      font-size:13px;
+      font-size:14px;
+      font-weight:1000;
       letter-spacing:.5px;
       text-transform:uppercase;
-      color:var(--text);
+      color: var(--text);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
     }
 
-    .ops{background:var(--secOps)}
-    .building{background:var(--secBuilding)}
-    .problem{background:var(--secProblem)}
-    .iap{background:var(--secIAP)}
-    .cmd{background:var(--secCmd)}
-    .follow{background:var(--secFollow)}
+    .sec1{ background: var(--sec1); }
+    .sec2{ background: var(--sec2); }
+    .sec3{ background: var(--sec3); }
 
-    .irrWrap{
-      border-radius:16px;
-      padding:12px;
-      border:1px solid rgba(0,0,0,.10);
-      background: rgba(255,255,255,.10);
-      color:var(--text);
-    }
-    .irrTitle{
-      margin:0 0 10px 0;
-      font-size:13px;
-      letter-spacing:.5px;
-      text-transform:uppercase;
-      font-weight:900;
-      color:var(--text);
-    }
-
+    /* Layout helpers */
     .twoCol{
       display:grid;
       grid-template-columns:1fr 1fr;
@@ -125,13 +113,22 @@
       .twoCol{grid-template-columns:1fr;}
     }
 
-    .miniRow{
+    /* Dropdowns (Batt + Apparatus) */
+    .selectRow{
       display:grid;
       grid-template-columns:1fr 1fr;
       gap:12px;
     }
     @media (max-width: 800px){
-      .miniRow{grid-template-columns:1fr;}
+      .selectRow{grid-template-columns:1fr;}
+    }
+
+    /* Group headings */
+    .groupHead{
+      margin: 0 0 10px 0;
+      font-weight: 900;
+      color: var(--text);
+      font-size: 14px;
     }
 
     label{
@@ -139,6 +136,29 @@
       color:var(--muted);
       font-size:12px;
       margin:10px 0 6px;
+    }
+
+    select{
+      width:100%;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid rgba(0,0,0,.12);
+      background:#ffffff;
+      color:var(--text);
+      font-size:15px;
+      font-weight:800;
+      box-shadow:0 6px 16px rgba(0,0,0,.10);
+    }
+
+    input[type="text"]{
+      width:100%;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid rgba(0,0,0,.12);
+      background:#ffffff;
+      color:var(--text);
+      font-size:15px;
+      box-shadow:0 6px 16px rgba(0,0,0,.10);
     }
 
     /* Buttons (4 across) */
@@ -161,7 +181,7 @@
       padding:12px 10px;
       border-radius:12px;
       font-size:15px;
-      font-weight:800;
+      font-weight:900;
       cursor:pointer;
       user-select:none;
       touch-action:manipulation;
@@ -174,39 +194,7 @@
       box-shadow:0 10px 22px rgba(37,99,235,.22);
     }
 
-    /* Dropdowns (Batt + Apparatus) */
-    .selectRow{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
-    }
-    @media (max-width: 800px){
-      .selectRow{grid-template-columns:1fr;}
-    }
-    select{
-      width:100%;
-      padding:12px 12px;
-      border-radius:12px;
-      border:1px solid rgba(0,0,0,.12);
-      background:#ffffff;
-      color:var(--text);
-      font-size:15px;
-      font-weight:700;
-      box-shadow:0 6px 16px rgba(0,0,0,.10);
-    }
-
-    input[type="text"]{
-      width:100%;
-      padding:12px 12px;
-      border-radius:12px;
-      border:1px solid rgba(0,0,0,.12);
-      background:#ffffff;
-      color:var(--text);
-      font-size:15px;
-      box-shadow:0 6px 16px rgba(0,0,0,.10);
-    }
-
-    /* Output cards */
+    /* Output boxes */
     .outputTitle{margin:0 0 10px 0;}
     .outputTitle b{color:#e9eefc;font-size:14px}
 
@@ -218,18 +206,28 @@
       border:1px solid rgba(255,255,255,.12);
       border-radius:14px;
       padding:12px;
-      min-height:170px;
+      min-height:160px;
       color:#e9eefc;
     }
 
-    .row{
+    .row3{
       display:grid;
       grid-template-columns:repeat(3, 1fr);
       gap:10px;
       margin-top:10px;
     }
     @media (max-width: 650px){
-      .row{grid-template-columns:1fr;}
+      .row3{grid-template-columns:1fr;}
+    }
+
+    .row2{
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 650px){
+      .row2{grid-template-columns:1fr;}
     }
 
     .btn{
@@ -239,7 +237,7 @@
       padding:12px 12px;
       border-radius:14px;
       font-size:15px;
-      font-weight:900;
+      font-weight:1000;
       cursor:pointer;
     }
     .btn.primary{
@@ -249,14 +247,6 @@
     .btn.danger{
       border-color: rgba(193,18,31,.55);
       background: rgba(193,18,31,.18);
-    }
-
-    /* Group headings (same look across Strategy/Command + Follow-up items) */
-    .groupHead{
-      margin: 0 0 10px 0;
-      font-weight: 900;
-      color: var(--text);
-      font-size: 14px;
     }
 
     /* Edit Mode UI */
@@ -272,7 +262,7 @@
       color:var(--text);
       padding:8px 10px;
       border-radius:12px;
-      font-weight:900;
+      font-weight:1000;
       cursor:pointer;
     }
   </style>
@@ -291,28 +281,19 @@
 
 <div class="wrap">
 
-  <!-- Controls -->
-  <div class="card" id="controls"></div>
-
-  <!-- Generated Size-Up -->
+  <!-- SECTION 1: Your Apparatus -->
   <div class="card">
-    <div class="outputTitle"><b>Generated Size-Up</b></div>
-    <div class="output" id="outputBox">Make selections to build your size-up.</div>
-    <div class="row">
-      <button class="btn primary" id="copyBtn">Copy Size-Up</button>
-      <button class="btn primary" id="printBtn">Print / PDF</button>
-      <button class="btn danger" id="clearSizeupBtn">Clear Size-Up</button>
-    </div>
+    <div class="section sec1" id="section1"></div>
   </div>
 
-  <!-- Follow-Up Report (starts after size-up output) -->
+  <!-- SECTION 2: IRR (includes generated size-up) -->
   <div class="card">
-    <div class="outputTitle"><b>Generated Follow-Up Report</b></div>
-    <div class="output" id="followOutputBox">Make selections to build your follow-up report.</div>
-    <div class="row" style="grid-template-columns:repeat(2,1fr);">
-      <button class="btn primary" id="copyFollowBtn">Copy Follow-Up</button>
-      <button class="btn danger" id="clearFollowBtn">Clear Follow-Up</button>
-    </div>
+    <div class="section sec2" id="section2"></div>
+  </div>
+
+  <!-- SECTION 3: Follow Up Report (includes generated follow-up) -->
+  <div class="card">
+    <div class="section sec3" id="section3"></div>
   </div>
 
 </div>
@@ -337,7 +318,7 @@
     if (editMode) {
       editMode = false;
       updateEditButton();
-      renderControls();
+      renderAll();
       return;
     }
     const entered = prompt("Enter Edit PIN:");
@@ -345,17 +326,17 @@
     if (entered.trim() === EDIT_PIN) {
       editMode = true;
       updateEditButton();
-      renderControls();
+      renderAll();
     } else {
       alert("Incorrect PIN.");
     }
   }
 
   // ===== Config persistence (device/browser) =====
-  const CONFIG_STORAGE_KEY = "mfd_sizeup_config_v1";
-  const FOLLOW_STORAGE_KEY = "mfd_follow_config_v1";
+  const CONFIG_STORAGE_KEY = "mfd_sizeup_config_v2";
+  const FOLLOW_STORAGE_KEY = "mfd_follow_config_v2";
 
-  // ---------- Groups (buttons) ----------
+  // ---------- IRR Groups (buttons) ----------
   const CONFIG = [
     { key:"buildingSize", title:"Building Size", mode:"single", options:[
       { value:"Small",  label:"Small",  phrase:"Small" },
@@ -410,14 +391,14 @@
     ]}
   ];
 
-  // Dropdown data (Batt + Apparatus)
+  // Section 1 dropdown data (Your Apparatus)
   const BATTALIONS = ["", "BC1", "BC2"];
   const APPARATUS = ["",
     "Trk 1","Eng 2","Trk 3","Eng 4","Trk 5","Eng 6","Eng 7","Trk 9","Eng 10","Trk 11",
     "Med 1","Med 2","Med 3","Med 5","Med 6","Med 7","Med 9","Med 10","Med 11"
   ];
 
-  // Follow-up group
+  // ---------- Follow-up groups ----------
   const FOLLOW = [
     { key:"r360", title:"Results of the 360", mode:"single", options:[
       { value:"Completed", label:"Completed", phrase:"Completed" },
@@ -466,45 +447,38 @@
   const state = {};
   const fstate = {};
 
-  const controlsEl = document.getElementById("controls");
-  const outputBox = document.getElementById("outputBox");
-  const followOutputBox = document.getElementById("followOutputBox");
+  // Outputs references (created during render)
+  let outputBox = null;
+  let followOutputBox = null;
 
   function init(){
     loadConfig();
-    renderControls();
-    updateOutputs();
-
     document.getElementById("editBtn").addEventListener("click", requestEditModeToggle);
     updateEditButton();
-
-    document.getElementById("copyBtn").addEventListener("click", () => copyFrom(outputBox, "Copied size-up!"));
-    document.getElementById("clearSizeupBtn").addEventListener("click", clearSizeup);
-
-    document.getElementById("copyFollowBtn").addEventListener("click", () => copyFrom(followOutputBox, "Copied follow-up!"));
-    document.getElementById("clearFollowBtn").addEventListener("click", clearFollow);
-
-    document.getElementById("printBtn").addEventListener("click", printPDF);
+    renderAll();
   }
 
+  // ---------- Interaction ----------
   function onChoice(group, value){
     if (group.mode === "single") state[group.key] = value;
     else {
       const current = Array.isArray(state[group.key]) ? state[group.key] : [];
       state[group.key] = current.includes(value) ? current.filter(v => v !== value) : [...current, value];
     }
-    renderControls();
+    renderAll(false); // re-render to update selected UI
     updateOutputs();
   }
 
   function onFollowChoice(group, value){
     fstate[group.key] = value;
-    renderControls();
+    renderAll(false);
     updateOutputs();
   }
 
+  // ---------- Render helpers ----------
   function renderButtonGroup(group, parentEl){
-    // Edit toolbar
+    if (!group) return;
+
     if (editMode) {
       const bar = document.createElement("div");
       bar.className = "editBar";
@@ -517,14 +491,9 @@
         if (!label) return;
         const phrase = prompt("Optional phrase for the paragraph (leave blank to use label):") || "";
         const value = label.trim();
-        group.options.push({
-          value,
-          label: label.trim(),
-          phrase: (phrase.trim() || label.trim())
-        });
+        group.options.push({ value, label: label.trim(), phrase: (phrase.trim() || label.trim()) });
         saveConfig();
-        renderControls();
-        updateOutputs();
+        renderAll();
       });
 
       bar.appendChild(add);
@@ -551,7 +520,7 @@
 
     parentEl.appendChild(grid);
 
-    // Occupancy Other input directly under Occupancy
+    // Occupancy Other input directly under occupancy
     if (group.key === "occupancy" && state.occupancy === "other") {
       const label = document.createElement("label");
       label.textContent = "Occupancy Type";
@@ -587,7 +556,8 @@
   }
 
   function renderFollowGroup(group, parentEl){
-    // Edit toolbar
+    if (!group) return;
+
     if (editMode) {
       const bar = document.createElement("div");
       bar.className = "editBar";
@@ -600,14 +570,9 @@
         if (!label) return;
         const phrase = prompt("Optional phrase (leave blank to use label):") || "";
         const value = label.trim();
-        group.options.push({
-          value,
-          label: label.trim(),
-          phrase: (phrase.trim() || label.trim())
-        });
+        group.options.push({ value, label: label.trim(), phrase: (phrase.trim() || label.trim()) });
         saveConfig();
-        renderControls();
-        updateOutputs();
+        renderAll();
       });
 
       bar.appendChild(add);
@@ -635,11 +600,7 @@
     parentEl.appendChild(grid);
   }
 
-  function renderDropdownBlock(parentEl){
-    const block = document.createElement("div");
-    block.className = "block ops";
-    block.innerHTML = `<h2>Batt / Apparatus</h2>`;
-
+  function renderDropdowns(parentEl){
     const row = document.createElement("div");
     row.className = "selectRow";
 
@@ -683,134 +644,129 @@
 
     row.appendChild(battWrap);
     row.appendChild(appWrap);
-    block.appendChild(row);
-    parentEl.appendChild(block);
+    parentEl.appendChild(row);
   }
 
-  function renderFollowBlock(parentEl){
-    const block = document.createElement("div");
-    block.className = "block follow";
-    block.innerHTML = `<h2>Follow Up Report</h2>`;
-
-    // Results of 360 (buttons)
-    renderFollowGroup(FOLLOW.find(g => g.key==="r360"), block);
-
-    // Additional information (fill-in area)
-    const addLabel = document.createElement("label");
-    addLabel.textContent = "Additional information";
-    block.appendChild(addLabel);
-
-    const addInput = document.createElement("input");
-    addInput.type = "text";
-    addInput.placeholder = "Optional notes…";
-    addInput.value = fstate.additional || "";
-    addInput.addEventListener("input", (e) => {
-      fstate.additional = e.target.value;
-      updateOutputs();
+  function refreshSelectedUI(){
+    document.querySelectorAll("button.choice").forEach(btn => {
+      // IRR buttons
+      if (btn.dataset.key) {
+        const key = btn.dataset.key;
+        const value = btn.dataset.value;
+        if (key === "strategy") {
+          btn.classList.toggle("selected", (state.strategy || "") === value);
+          return;
+        }
+        const group = CONFIG.find(g => g.key === key);
+        if (!group) return;
+        const current = state[key];
+        const selected = (group.mode === "single")
+          ? current === value
+          : Array.isArray(current) && current.includes(value);
+        btn.classList.toggle("selected", selected);
+      }
+      // follow-up buttons
+      if (btn.dataset.fkey) {
+        const k = btn.dataset.fkey;
+        const v = btn.dataset.fvalue;
+        btn.classList.toggle("selected", (fstate[k] || "") === v);
+      }
     });
-    block.appendChild(addInput);
-
-    // Immediate safety concerns (same style as results title)
-    const safTitle = document.createElement("div");
-    safTitle.className = "groupHead";
-    safTitle.textContent = "Immediate safety concerns";
-    block.appendChild(safTitle);
-
-    const safInput = document.createElement("input");
-    safInput.type = "text";
-    safInput.placeholder = "e.g., power lines down, propane, unstable wall…";
-    safInput.value = fstate.safety || "";
-    safInput.addEventListener("input", (e) => {
-      fstate.safety = e.target.value;
-      updateOutputs();
-    });
-    block.appendChild(safInput);
-
-    // Confirm Strategy/Change IAP
-    renderFollowGroup(FOLLOW.find(g => g.key==="confirmStrategy"), block);
-
-    const notesLabel = document.createElement("label");
-    notesLabel.textContent = "Notes";
-    block.appendChild(notesLabel);
-
-    const notesInput = document.createElement("input");
-    notesInput.type = "text";
-    notesInput.placeholder = "Optional notes…";
-    notesInput.value = fstate.confirmNotes || "";
-    notesInput.addEventListener("input", (e) => {
-      fstate.confirmNotes = e.target.value;
-      updateOutputs();
-    });
-    block.appendChild(notesInput);
-
-    // Resource determination
-    renderFollowGroup(FOLLOW.find(g => g.key==="resourceDetermination"), block);
-
-    parentEl.appendChild(block);
   }
 
-  function renderControls(){
-    controlsEl.innerHTML = "";
+  // ---------- Build Sections ----------
+  function renderSection1(){
+    const s1 = document.getElementById("section1");
+    s1.innerHTML = "";
 
-    // Batt + Apparatus (dropdowns side-by-side)
-    renderDropdownBlock(controlsEl);
+    const title = document.createElement("div");
+    title.className = "sectionTitle";
+    title.textContent = "Section 1 — Your Apparatus";
+    s1.appendChild(title);
 
-    // IRR (two columns)
-    const irr = document.createElement("div");
-    irr.className = "irrWrap";
-    irr.innerHTML = `<div class="irrTitle">IRR</div>`;
+    renderDropdowns(s1);
+  }
 
-    const cols = document.createElement("div");
-    cols.className = "twoCol";
+  function renderSection2(){
+    const s2 = document.getElementById("section2");
+    s2.innerHTML = "";
 
-    const building = document.createElement("div");
-    building.className = "block building";
-    building.innerHTML = `<h2>Building Description</h2>`;
-    renderButtonGroup(CONFIG.find(g => g.key==="buildingSize"), building);
-    renderButtonGroup(CONFIG.find(g => g.key==="height"), building);
-    renderButtonGroup(CONFIG.find(g => g.key==="occupancy"), building);
+    const title = document.createElement("div");
+    title.className = "sectionTitle";
+    title.textContent = "Section 2 — IRR";
+    s2.appendChild(title);
 
-    const problem = document.createElement("div");
-    problem.className = "block problem";
-    problem.innerHTML = `<h2>Problem Description</h2>`;
-    renderButtonGroup(CONFIG.find(g => g.key==="conditions"), problem);
-    renderButtonGroup(CONFIG.find(g => g.key==="problemSides"), problem);
+    // Top row: Building Size (left) / Condition (right)
+    const top = document.createElement("div");
+    top.className = "twoCol";
 
-    cols.appendChild(building);
-    cols.appendChild(problem);
-    irr.appendChild(cols);
-    controlsEl.appendChild(irr);
+    const left = document.createElement("div");
+    left.style.background = "rgba(255,255,255,.55)";
+    left.style.border = "1px solid rgba(0,0,0,.10)";
+    left.style.borderRadius = "16px";
+    left.style.padding = "12px";
 
-    // IAP (left) and Strategy/Command (right, same box)
-    const row = document.createElement("div");
-    row.className = "miniRow";
+    renderButtonGroup(CONFIG.find(g => g.key==="buildingSize"), left);
+    renderButtonGroup(CONFIG.find(g => g.key==="height"), left);
+    renderButtonGroup(CONFIG.find(g => g.key==="occupancy"), left);
 
-    const iap = document.createElement("div");
-    iap.className = "block iap";
-    iap.innerHTML = `<h2>Initial Action Plan</h2>`;
-    renderButtonGroup(CONFIG.find(g => g.key==="iapTasks"), iap);
-    renderButtonGroup(CONFIG.find(g => g.key==="iapLocation"), iap);
-    renderButtonGroup(CONFIG.find(g => g.key==="iapObjectives"), iap);
+    const right = document.createElement("div");
+    right.style.background = "rgba(255,255,255,.55)";
+    right.style.border = "1px solid rgba(0,0,0,.10)";
+    right.style.borderRadius = "16px";
+    right.style.padding = "12px";
 
-    const cmd = document.createElement("div");
-    cmd.className = "block cmd";
-    cmd.innerHTML = `<h2>Strategy / Command</h2>`;
+    renderButtonGroup(CONFIG.find(g => g.key==="conditions"), right);
+    renderButtonGroup(CONFIG.find(g => g.key==="problemSides"), right);
 
-    // Strategy (match button-group heading)
-    if (editMode) {
-      const bar = document.createElement("div");
-      bar.className = "editBar";
-      const hint = document.createElement("div");
-      hint.className = "editChip";
-      hint.textContent = "Edit Mode On";
-      bar.appendChild(hint);
-      cmd.appendChild(bar);
-    }
+    top.appendChild(left);
+    top.appendChild(right);
+    s2.appendChild(top);
 
+    // Second row: IAP (left) / Strategy/Command (right)
+    const mid = document.createElement("div");
+    mid.className = "twoCol";
+    mid.style.marginTop = "12px";
+
+    const iapBox = document.createElement("div");
+    iapBox.style.background = "rgba(255,255,255,.55)";
+    iapBox.style.border = "1px solid rgba(0,0,0,.10)";
+    iapBox.style.borderRadius = "16px";
+    iapBox.style.padding = "12px";
+
+    const iapTitle = document.createElement("div");
+    iapTitle.className = "sectionTitle";
+    iapTitle.style.fontSize = "13px";
+    iapTitle.style.textTransform = "uppercase";
+    iapTitle.style.letterSpacing = ".5px";
+    iapTitle.style.marginBottom = "8px";
+    iapTitle.textContent = "Initial Action Plan";
+    iapBox.appendChild(iapTitle);
+
+    renderButtonGroup(CONFIG.find(g => g.key==="iapTasks"), iapBox);
+    renderButtonGroup(CONFIG.find(g => g.key==="iapLocation"), iapBox);
+    renderButtonGroup(CONFIG.find(g => g.key==="iapObjectives"), iapBox);
+
+    const stratCmdBox = document.createElement("div");
+    stratCmdBox.style.background = "rgba(255,255,255,.55)";
+    stratCmdBox.style.border = "1px solid rgba(0,0,0,.10)";
+    stratCmdBox.style.borderRadius = "16px";
+    stratCmdBox.style.padding = "12px";
+
+    const scTitle = document.createElement("div");
+    scTitle.className = "sectionTitle";
+    scTitle.style.fontSize = "13px";
+    scTitle.style.textTransform = "uppercase";
+    scTitle.style.letterSpacing = ".5px";
+    scTitle.style.marginBottom = "8px";
+    scTitle.textContent = "Strategy / Command";
+    stratCmdBox.appendChild(scTitle);
+
+    // Strategy buttons
     const stratHead = document.createElement("div");
     stratHead.className = "groupHead";
     stratHead.textContent = "Strategy";
-    cmd.appendChild(stratHead);
+    stratCmdBox.appendChild(stratHead);
 
     const stratGrid = document.createElement("div");
     stratGrid.className = "grid";
@@ -822,18 +778,18 @@
       btn.textContent = v;
       btn.addEventListener("click", () => {
         state.strategy = v;
-        renderControls();
+        renderAll(false);
         updateOutputs();
       });
       stratGrid.appendChild(btn);
     });
-    cmd.appendChild(stratGrid);
+    stratCmdBox.appendChild(stratGrid);
 
-    // Command (same font/style as Strategy)
+    // Command (styled like Strategy)
     const cmdHead = document.createElement("div");
     cmdHead.className = "groupHead";
     cmdHead.textContent = "Command";
-    cmd.appendChild(cmdHead);
+    stratCmdBox.appendChild(cmdHead);
 
     const cmdInput = document.createElement("input");
     cmdInput.type = "text";
@@ -843,48 +799,146 @@
       state.commandText = e.target.value;
       updateOutputs();
     });
-    cmd.appendChild(cmdInput);
+    stratCmdBox.appendChild(cmdInput);
 
-    row.appendChild(iap);
-    row.appendChild(cmd);
-    controlsEl.appendChild(row);
+    mid.appendChild(iapBox);
+    mid.appendChild(stratCmdBox);
+    s2.appendChild(mid);
 
-    // Follow-up section starts here (after size-up output visually)
-    renderFollowBlock(controlsEl);
-
-    refreshSelectedUI();
+    // Generated Size Up output (inside Section 2)
+    const outWrap = document.createElement("div");
+    outWrap.style.marginTop = "12px";
+    outWrap.innerHTML = `
+      <div class="outputTitle"><b>Generated Size-Up</b></div>
+      <div class="output" id="outputBox">Make selections to build your size-up.</div>
+      <div class="row3">
+        <button class="btn primary" id="copyBtn">Copy Size-Up</button>
+        <button class="btn primary" id="printBtn">Print / PDF</button>
+        <button class="btn danger" id="clearSizeupBtn">Clear Size-Up</button>
+      </div>
+    `;
+    s2.appendChild(outWrap);
   }
 
-  function refreshSelectedUI(){
-    document.querySelectorAll("button.choice").forEach(btn => {
-      // size-up buttons
-      if (btn.dataset.key) {
-        const key = btn.dataset.key;
-        const value = btn.dataset.value;
+  function renderSection3(){
+    const s3 = document.getElementById("section3");
+    s3.innerHTML = "";
 
-        if (key === "strategy") {
-          btn.classList.toggle("selected", (state.strategy || "") === value);
-          return;
-        }
+    const title = document.createElement("div");
+    title.className = "sectionTitle";
+    title.textContent = "Section 3 — Follow Up Report";
+    s3.appendChild(title);
 
-        const group = CONFIG.find(g => g.key === key);
-        if (!group) return;
-        const current = state[key];
-        const selected = (group.mode === "single")
-          ? current === value
-          : Array.isArray(current) && current.includes(value);
-        btn.classList.toggle("selected", selected);
-      }
+    // Follow-up controls
+    const followBox = document.createElement("div");
+    followBox.style.background = "rgba(255,255,255,.55)";
+    followBox.style.border = "1px solid rgba(0,0,0,.10)";
+    followBox.style.borderRadius = "16px";
+    followBox.style.padding = "12px";
 
-      // follow-up buttons
-      if (btn.dataset.fkey) {
-        const k = btn.dataset.fkey;
-        const v = btn.dataset.fvalue;
-        btn.classList.toggle("selected", (fstate[k] || "") === v);
-      }
+    const fTitle = document.createElement("div");
+    fTitle.className = "sectionTitle";
+    fTitle.style.fontSize = "13px";
+    fTitle.style.textTransform = "uppercase";
+    fTitle.style.letterSpacing = ".5px";
+    fTitle.style.marginBottom = "8px";
+    fTitle.textContent = "Follow Up Report";
+    followBox.appendChild(fTitle);
+
+    renderFollowGroup(FOLLOW.find(g => g.key==="r360"), followBox);
+
+    const addLabel = document.createElement("label");
+    addLabel.textContent = "Additional information";
+    followBox.appendChild(addLabel);
+
+    const addInput = document.createElement("input");
+    addInput.type = "text";
+    addInput.placeholder = "Optional notes…";
+    addInput.value = fstate.additional || "";
+    addInput.addEventListener("input", (e) => {
+      fstate.additional = e.target.value;
+      updateOutputs();
     });
+    followBox.appendChild(addInput);
+
+    const safTitle = document.createElement("div");
+    safTitle.className = "groupHead";
+    safTitle.textContent = "Immediate safety concerns";
+    followBox.appendChild(safTitle);
+
+    const safInput = document.createElement("input");
+    safInput.type = "text";
+    safInput.placeholder = "e.g., power lines down, propane, unstable wall…";
+    safInput.value = fstate.safety || "";
+    safInput.addEventListener("input", (e) => {
+      fstate.safety = e.target.value;
+      updateOutputs();
+    });
+    followBox.appendChild(safInput);
+
+    renderFollowGroup(FOLLOW.find(g => g.key==="confirmStrategy"), followBox);
+
+    const notesLabel = document.createElement("label");
+    notesLabel.textContent = "Notes";
+    followBox.appendChild(notesLabel);
+
+    const notesInput = document.createElement("input");
+    notesInput.type = "text";
+    notesInput.placeholder = "Optional notes…";
+    notesInput.value = fstate.confirmNotes || "";
+    notesInput.addEventListener("input", (e) => {
+      fstate.confirmNotes = e.target.value;
+      updateOutputs();
+    });
+    followBox.appendChild(notesInput);
+
+    renderFollowGroup(FOLLOW.find(g => g.key==="resourceDetermination"), followBox);
+
+    s3.appendChild(followBox);
+
+    // Generated Follow-up output (inside Section 3)
+    const outWrap = document.createElement("div");
+    outWrap.style.marginTop = "12px";
+    outWrap.innerHTML = `
+      <div class="outputTitle"><b>Generated Follow-Up Report</b></div>
+      <div class="output" id="followOutputBox">Make selections to build your follow-up report.</div>
+      <div class="row2">
+        <button class="btn primary" id="copyFollowBtn">Copy Follow-Up</button>
+        <button class="btn danger" id="clearFollowBtn">Clear Follow-Up</button>
+      </div>
+    `;
+    s3.appendChild(outWrap);
   }
 
+  function wireButtons(){
+    outputBox = document.getElementById("outputBox");
+    followOutputBox = document.getElementById("followOutputBox");
+
+    const copyBtn = document.getElementById("copyBtn");
+    const clearSize = document.getElementById("clearSizeupBtn");
+    const printBtn = document.getElementById("printBtn");
+
+    if (copyBtn) copyBtn.addEventListener("click", () => copyFrom(outputBox, "Copied size-up!"));
+    if (clearSize) clearSize.addEventListener("click", clearSizeup);
+    if (printBtn) printBtn.addEventListener("click", printPDF);
+
+    const copyFollow = document.getElementById("copyFollowBtn");
+    const clearFollowBtn = document.getElementById("clearFollowBtn");
+    if (copyFollow) copyFollow.addEventListener("click", () => copyFrom(followOutputBox, "Copied follow-up!"));
+    if (clearFollowBtn) clearFollowBtn.addEventListener("click", clearFollow);
+  }
+
+  // Render all sections. If full=true, also rewires buttons.
+  function renderAll(full=true){
+    renderSection1();
+    renderSection2();
+    renderSection3();
+    refreshSelectedUI();
+    wireButtons();
+    updateOutputs();
+  }
+
+  // ---------- Text building ----------
   function optionPhrase(groupKey, value){
     const group = CONFIG.find(g => g.key === groupKey);
     if (!group) return "";
@@ -903,7 +957,6 @@
     return sidesArr.map(s => s.toLowerCase()).join(" ");
   }
 
-  // Command normalization: always end with "Command"
   function normalizeCommandName(raw){
     let s = (raw || "").trim();
     if (!s) return "";
@@ -912,7 +965,9 @@
   }
 
   function updateOutputs(){
-    // ---------- SIZE-UP ----------
+    if (!outputBox || !followOutputBox) return;
+
+    // SIZE-UP
     const battalion = (state.battalion || "").trim();
     const apparatus = (state.apparatus || "").trim();
 
@@ -962,7 +1017,7 @@
 
     outputBox.textContent = [line1, line2, line3].join("\n\n");
 
-    // ---------- FOLLOW-UP ----------
+    // FOLLOW-UP
     const r360 = (fstate.r360 || "").trim();
     const additional = (fstate.additional || "").trim();
     const safety = (fstate.safety || "").trim();
@@ -981,8 +1036,9 @@
     followOutputBox.textContent = lines.join("\n");
   }
 
+  // ---------- Buttons ----------
   async function copyFrom(el, msg){
-    const text = el.textContent || "";
+    const text = el?.textContent || "";
     try{
       await navigator.clipboard.writeText(text);
       alert(msg);
@@ -999,14 +1055,12 @@
 
   function clearSizeup(){
     Object.keys(state).forEach(k => delete state[k]);
-    renderControls();
-    updateOutputs();
+    renderAll();
   }
 
   function clearFollow(){
     Object.keys(fstate).forEach(k => delete fstate[k]);
-    renderControls();
-    updateOutputs();
+    renderAll();
   }
 
   // Print/PDF of just the generated paragraphs
@@ -1020,8 +1074,8 @@
   }
 
   function printPDF(){
-    const sizeup = outputBox.textContent || "";
-    const follow = followOutputBox.textContent || "";
+    const sizeup = outputBox?.textContent || "";
+    const follow = followOutputBox?.textContent || "";
 
     const w = window.open("", "_blank");
     if (!w) {
@@ -1029,8 +1083,7 @@
       return;
     }
 
-    const now = new Date();
-    const stamp = now.toLocaleString();
+    const stamp = new Date().toLocaleString();
 
     w.document.open();
     w.document.write(`
