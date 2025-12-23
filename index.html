@@ -729,7 +729,7 @@
     });
     cmd.appendChild(stratGrid);
 
-    const cmdLabel = document.createElement("label");
+    const cmdLabel = document.createElement("div");
     cmdLabel.style.margin = "0 0 10px 0";
     cmdLabel.textContent = "Command";
     cmd.appendChild(cmdLabel);
@@ -748,11 +748,7 @@
     row.appendChild(cmd);
     controlsEl.appendChild(row);
 
-    // 4) Follow Up Report (after generated size-up in the page layout, but controls are here still)
-    // You asked: "generated size up, then start the next section with follow up report."
-    // Controls are above outputs; to match your request visually, we keep follow-up controls below this line:
-    renderFollowBlock(controlsEl);
-
+  
     refreshSelectedUI();
   }
 
@@ -862,6 +858,14 @@
 
     outputBox.textContent = [line1, line2, line3].join("\n\n");
 
+
+      // 4) Follow Up Report (after generated size-up in the page layout, but controls are here still)
+    // You asked: "generated size up, then start the next section with follow up report."
+    // Controls are above outputs; to match your request visually, we keep follow-up controls below this line:
+  
+    
+    renderFollowBlock(controlsEl);
+    
     // ---------- FOLLOW-UP REPORT ----------
     const r360 = (fstate.r360 || "").trim();
     const additional = (fstate.additional || "").trim();
