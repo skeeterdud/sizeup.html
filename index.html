@@ -24,17 +24,16 @@
       --text:#0b1220;
       --muted: rgba(11,18,32,.75);
 
-      --cardBorder: rgba(255,255,255,.20);
-
       /* Section fills */
       --secBuilding:#fde68a; /* warm yellow */
       --secProblem:#fecaca;  /* light red */
       --secIAP:#bbf7d0;      /* light green */
-      --secCommand:#bfdbfe;  /* light blue */
+      --secStrategy:#bfdbfe; /* light blue */
+      --secCommand:#ddd6fe;  /* light purple */
 
       /* Watermark controls */
-      --wmOpacity: 0.50;     /* increase to 0.14 if you want more visible */
-      --wmSize: 500px;       /* watermark size */
+      --wmOpacity: 0.10;     /* increase to 0.14 if you want more visible */
+      --wmSize: 820px;       /* watermark size */
     }
 
     *{box-sizing:border-box}
@@ -101,13 +100,11 @@
       letter-spacing:.5px;
       text-transform:uppercase;
       color: var(--text);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
     }
     .section.building{ background: var(--secBuilding); }
     .section.problem{  background: var(--secProblem); }
     .section.iap{      background: var(--secIAP); }
+    .section.strategy{ background: var(--secStrategy); }
     .section.command{  background: var(--secCommand); }
 
     .group-title{
@@ -310,13 +307,6 @@
     ]}
   ];
 
-  // ---------- Text Fields (general) ----------
-  // NOTE: Occupancy Other is handled inline under the Occupancy section (not here).
-  const TEXT_FIELDS = [
-    { key:"problemLocationText", label:"Location of the Problem (free text)", placeholder:"e.g., 2nd floor Bravo / roof line / rear storage…" },
-    { key:"assumeCommand", label:"Assume/Name Command (type it)", placeholder:"e.g., Engine 1 assuming Main Street Command" }
-  ];
-
   // ---------- State ----------
   const state = {};
   const controlsEl = document.getElementById("controls");
@@ -327,7 +317,8 @@
     { cssClass:"building", title:"Building / Area Description", keys:["buildingSize","height","occupancy"] },
     { cssClass:"problem",  title:"Problem Description",         keys:["conditions","problemSides"] },
     { cssClass:"iap",      title:"Initial Action Plan",         keys:["iapTasks","iapLocation","iapObjectives"] },
-    { cssClass:"command",  title:"Strategy / Command",          keys:["strategy"] }
+    { cssClass:"strategy", title:"Strategy",                    keys:["strategy"] },
+    { cssClass:"command",  title:"Command",                     keys:[] }
   ];
 
   function init() {
@@ -399,6 +390,23 @@
         wrap.appendChild(input);
       }
 
+      // Problem Location (free text) directly under Problem Sides
+      if (group.key === "problemSides") {
+        const label = document.createElement("label");
+        label.textContent = "Location of the Problem (free text)";
+        wrap.appendChild(label);
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = "e.g., 2nd floor Bravo / roof line / rear storage…";
+        input.value = state.problemLocationText || "";
+        input.addEventListener("input", (e) => {
+          state.problemLocationText = e.target.value;
+          updateOutput();
+        });
+        wrap.appendChild(input);
+      }
+
       parentEl.appendChild(wrap);
     }
 
@@ -412,24 +420,25 @@
       secEl.appendChild(header);
 
       sec.keys.forEach(k => renderGroup(k, secEl));
+
+      // Command section: Assume/Name Command input
+      if (sec.title === "Command") {
+        const label = document.createElement("label");
+        label.textContent = "Assume/Name Command (type it)";
+        secEl.appendChild(label);
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = "e.g., Engine 1 assuming Main Street Command";
+        input.value = state.assumeCommand || "";
+        input.addEventListener("input", (e) => {
+          state.assumeCommand = e.target.value;
+          updateOutput();
+        });
+        secEl.appendChild(input);
+      }
+
       controlsEl.appendChild(secEl);
-    });
-
-    // Render remaining text fields at bottom
-    TEXT_FIELDS.forEach(tf => {
-      const label = document.createElement("label");
-      label.textContent = tf.label;
-      controlsEl.appendChild(label);
-
-      const input = document.createElement("input");
-      input.type = "text";
-      input.placeholder = tf.placeholder;
-      input.value = state[tf.key] || "";
-      input.addEventListener("input", (e) => {
-        state[tf.key] = e.target.value;
-        updateOutput();
-      });
-      controlsEl.appendChild(input);
     });
 
     refreshSelectedUI();
