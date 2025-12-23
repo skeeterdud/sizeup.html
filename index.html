@@ -794,6 +794,16 @@
   function niceSidesDisplay(sidesArr){
     return sidesArr.map(s => s.toLowerCase()).join(" ");
   }
+  function normalizeCommandName(raw){
+  let s = (raw || "").trim();
+  if (!s) return "";
+
+  // If they already ended with "Command" (or "command."), keep it
+  if (/command\.?$/i.test(s)) return s.replace(/\.*$/,"");
+
+  // Otherwise append " Command"
+  return `${s} Command`;
+}
 
   function updateOutputs(){
     // ---------- SIZE-UP ----------
@@ -816,7 +826,7 @@
     const objectives = multiList("iapObjectives").map(v => optionPhrase("iapObjectives", v)).filter(Boolean);
 
     const strategy = (state.strategy || "Offensive").toLowerCase();
-    const cmdText = (state.commandText || "").trim();
+    const cmdText = normalizeCommandName(state.commandText);
 
     const buildingParts = [bSize, bHeight, occ].filter(Boolean);
     const buildingPhrase = buildingParts.length ? buildingParts.join(" ") : "a structure";
