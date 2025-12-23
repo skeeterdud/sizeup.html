@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MFD Size-Up Builder</title>
 
-  <!-- iPhone / PWA settings -->
   <meta name="theme-color" content="#0b1220" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -13,223 +12,44 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
   <style>
-    :root { --bg:#0b1220; --panel:#121a2b; --text:#e9eefc; --muted:#a7b2d6; --accent:#2dd4bf; --danger:#fb7185; }
+    :root { --bg:#0b1220; --text:#e9eefc; --muted:#a7b2d6; --accent:#2dd4bf; --danger:#fb7185; }
     *{box-sizing:border-box}
     body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
     header{padding:14px 16px;background:rgba(18,26,43,.9);position:sticky;top:0;border-bottom:1px solid rgba(255,255,255,.08)}
     h1{margin:0;font-size:16px}
     .hint{color:var(--muted);font-size:12px;margin-top:4px}
+
     .wrap{display:grid;grid-template-columns:1fr;gap:12px;padding:12px}
     .card{background:rgba(18,26,43,.75);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:12px}
     .group-title{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px 0}
     .group-title b{font-size:14px}
-    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-    button.choice{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:var(--text);padding:14px 12px;border-radius:14px;font-size:18px;font-weight:800}
-    button.choice.selected{border-color:rgba(45,212,191,.85);background:rgba(45,212,191,.18)}
-    .output{white-space:pre-wrap;font-size:17px;line-height:1.35;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:12px;min-height:140px}
+
+    /* Smaller buttons than before */
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    button.choice{
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 10px;           /* smaller */
+      border-radius:12px;
+      font-size:15px;              /* smaller */
+      font-weight:800;
+    }
+    button.choice.selected{
+      border-color:rgba(45,212,191,.85);
+      background:rgba(45,212,191,.18)
+    }
+
+    .output{
+      white-space:pre-wrap;
+      font-size:16px;
+      line-height:1.35;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      padding:12px;
+      min-height:160px
+    }
+
     .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-    .btn{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:var(--text);padding:14px 12px;border-radius:14px;font-size:16px;font-weight:900}
-    .btn.primary{border-color:rgba(45,212,191,.65);background:rgba(45,212,191,.14)}
-    .btn.danger{border-color:rgba(251,113,133,.7);background:rgba(251,113,133,.12)}
-    input[type="text"]{width:100%;padding:14px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:var(--text);font-size:16px}
-    label{display:block;color:var(--muted);font-size:12px;margin:10px 0 6px}
-  </style>
-</head>
-<body>
-  <header>
-    <h1>MFD Size-Up Builder</h1>
-    <div class="hint">Tap selections → paragraph updates → Copy.</div>
-  </header>
-
-  <div class="wrap">
-    <div class="card" id="controls"></div>
-
-    <div class="card">
-      <div class="group-title"><b>Generated Size-Up</b></div>
-      <div class="output" id="outputBox">Make selections to build your size-up.</div>
-      <div class="row">
-        <button class="btn primary" id="copyBtn">Copy</button>
-        <button class="btn danger" id="clearBtn">Clear</button>
-      </div>
-    </div>
-  </div>
-
-<script>
-  // Register service worker for offline use
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));
-  }
-
-  // ===== Edit these groups as you grow the worksheet =====
-  const CONFIG = [
-    {
-      key: "buildingSize",
-      title: "Building Size",
-      mode: "single",
-      options: [
-        { value:"small", label:"Small", phrase:"a small" },
-        { value:"medium", label:"Medium", phrase:"a medium" },
-        { value:"large", label:"Large", phrase:"a large" },
-        { value:"mega", label:"Mega", phrase:"a mega" }
-      ]
-    },
-    {
-      key: "height",
-      title: "Height (Floors)",
-      mode: "single",
-      options: [
-        { value:"1", label:"1", phrase:"one-story" },
-        { value:"2", label:"2", phrase:"two-story" },
-        { value:"3", label:"3", phrase:"three-story" },
-        { value:"4", label:"4", phrase:"four-story" },
-        { value:"5", label:"5", phrase:"five-story" }
-      ]
-    },
-    {
-      key: "conditions",
-      title: "Conditions",
-      mode: "single",
-      options: [
-        { value:"nothing", label:"Nothing Showing", phrase:"Nothing showing at this time." },
-        { value:"light", label:"Light Smoke", phrase:"Light smoke showing." },
-        { value:"heavy", label:"Heavy Smoke", phrase:"Heavy smoke showing." },
-        { value:"defensive", label:"Defensive", phrase:"Defensive fire conditions present." }
-      ]
-    }
-  ];
-
-  const state = {};
-  const controlsEl = document.getElementById("controls");
-  const outputBox = document.getElementById("outputBox");
-
-  // Text fields (simple start — you can add more)
-  const TEXT_FIELDS = [
-    { key:"occupancyText", label:"Occupancy Type (type it)", placeholder:"e.g., apartment, strip center, big box..." },
-    { key:"problemLocation", label:"Location of the Problem (optional)", placeholder:"e.g., Bravo side, roof line / 2nd floor Charlie..." }
-  ];
-
-  function init() {
-    renderControls();
-    document.getElementById("copyBtn").addEventListener("click", copyText);
-    document.getElementById("clearBtn").addEventListener("click", clearAll);
-    updateOutput();
-  }
-
-  function renderControls() {
-    controlsEl.innerHTML = "";
-
-    CONFIG.forEach(group => {
-      const wrap = document.createElement("div");
-      wrap.style.marginBottom = "12px";
-
-      const title = document.createElement("div");
-      title.className = "group-title";
-      title.innerHTML = `<b>${group.title}</b>`;
-      wrap.appendChild(title);
-
-      const grid = document.createElement("div");
-      grid.className = "grid";
-
-      group.options.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.className = "choice";
-        btn.textContent = opt.label;
-        btn.addEventListener("click", () => {
-          state[group.key] = opt.value;
-          refreshSelectedUI();
-          updateOutput();
-        });
-        btn.dataset.key = group.key;
-        btn.dataset.value = opt.value;
-        grid.appendChild(btn);
-      });
-
-      wrap.appendChild(grid);
-      controlsEl.appendChild(wrap);
-    });
-
-    // Text fields
-    TEXT_FIELDS.forEach(tf => {
-      const label = document.createElement("label");
-      label.textContent = tf.label;
-      controlsEl.appendChild(label);
-
-      const input = document.createElement("input");
-      input.type = "text";
-      input.placeholder = tf.placeholder;
-      input.value = state[tf.key] || "";
-      input.addEventListener("input", (e) => {
-        state[tf.key] = e.target.value;
-        updateOutput();
-      });
-      controlsEl.appendChild(input);
-    });
-
-    refreshSelectedUI();
-  }
-
-  function refreshSelectedUI() {
-    document.querySelectorAll("button.choice").forEach(btn => {
-      const key = btn.dataset.key;
-      const val = btn.dataset.value;
-      btn.classList.toggle("selected", state[key] === val);
-    });
-  }
-
-  function phraseFor(key) {
-    const group = CONFIG.find(g => g.key === key);
-    if (!group) return "";
-    const val = state[key];
-    if (!val) return "";
-    return (group.options.find(o => o.value === val)?.phrase || "").trim();
-  }
-
-  function updateOutput() {
-    const size = phraseFor("buildingSize");
-    const floors = phraseFor("height");
-    const occupancy = (state.occupancyText || "").trim();
-
-    const openingParts = [];
-    if (size) openingParts.push(size);
-    if (floors) openingParts.push(floors);
-    if (occupancy) openingParts.push(occupancy);
-
-    let text = openingParts.length
-      ? `We have ${openingParts.join(", ")}.`
-      : `We have a structure.`;
-
-    const conditionsSentence = phraseFor("conditions");
-    if (conditionsSentence) text += `\n\n${conditionsSentence}`;
-
-    const loc = (state.problemLocation || "").trim();
-    if (loc) text += ` Location: ${loc}.`;
-
-    outputBox.textContent = text;
-  }
-
-  async function copyText() {
-    const text = outputBox.textContent || "";
-    try {
-      await navigator.clipboard.writeText(text);
-      alert("Copied!");
-    } catch {
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      document.body.removeChild(ta);
-      alert("Copied!");
-    }
-  }
-
-  function clearAll() {
-    Object.keys(state).forEach(k => delete state[k]);
-    renderControls();
-    updateOutput();
-  }
-
-  init();
-</script>
-</body>
-</html>
+    .
