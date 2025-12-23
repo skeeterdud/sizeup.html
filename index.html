@@ -15,7 +15,6 @@
   <style>
     :root{
       --navy:#0b1a3a;
-      --navy2:#111f42;
       --blue:#2563eb;
       --text:#0b1220;
       --muted: rgba(11,18,32,.75);
@@ -24,8 +23,7 @@
       --secBuilding:#fecaca;
       --secProblem:#bbf7d0;
       --secIAP:#bfdbfe;
-      --secStrategy:#ddd6fe;
-      --secCommand:#fed7aa;
+      --secCmd:#ddd6fe;
       --secFollow:#cffafe;
 
       --wmOpacity: 0.10;
@@ -40,7 +38,6 @@
       color:#e9eefc;
     }
 
-    /* watermark */
     body::before{
       content:"";
       position: fixed;
@@ -81,7 +78,6 @@
       padding:12px;
     }
 
-    /* content blocks */
     .block{
       border-radius:16px;
       padding:12px;
@@ -100,11 +96,9 @@
     .building{background:var(--secBuilding)}
     .problem{background:var(--secProblem)}
     .iap{background:var(--secIAP)}
-    .strategy{background:var(--secStrategy)}
-    .command{background:var(--secCommand)}
+    .cmd{background:var(--secCmd)}
     .follow{background:var(--secFollow)}
 
-    /* IRR wrapper (title + 2 columns inside) */
     .irrWrap{
       border-radius:16px;
       padding:12px;
@@ -112,13 +106,13 @@
       background: rgba(255,255,255,.10);
       color:var(--text);
     }
-    .irrWrap .irrTitle{
+    .irrTitle{
       margin:0 0 10px 0;
       font-size:13px;
       letter-spacing:.5px;
       text-transform:uppercase;
-      color:var(--text);
       font-weight:900;
+      color:var(--text);
     }
 
     .twoCol{
@@ -130,17 +124,23 @@
       .twoCol{grid-template-columns:1fr;}
     }
 
-    .group-title{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      margin:0 0 10px 0;
+    .miniRow{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
     }
-    .group-title b{font-size:14px;color:var(--text)}
+    @media (max-width: 800px){
+      .miniRow{grid-template-columns:1fr;}
+    }
 
-    label{display:block;color:var(--muted);font-size:12px;margin:10px 0 6px}
+    label{
+      display:block;
+      color:var(--muted);
+      font-size:12px;
+      margin:10px 0 6px;
+    }
 
-    /* 4 across buttons */
+    /* Buttons (still used for many sections) */
     .grid{
       display:grid;
       grid-template-columns:repeat(4,minmax(0,1fr));
@@ -171,6 +171,27 @@
       background:var(--blue);
       color:#ffffff;
       box-shadow:0 10px 22px rgba(37,99,235,.22);
+    }
+
+    /* Dropdowns */
+    .selectRow{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 800px){
+      .selectRow{grid-template-columns:1fr;}
+    }
+    select{
+      width:100%;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid rgba(0,0,0,.12);
+      background:#ffffff;
+      color:var(--text);
+      font-size:15px;
+      font-weight:700;
+      box-shadow:0 6px 16px rgba(0,0,0,.10);
     }
 
     input[type="text"]{
@@ -224,25 +245,12 @@
       background: rgba(193,18,31,.18);
     }
 
-    .miniRow{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
-    }
-    @media (max-width: 800px){
-      .miniRow{grid-template-columns:1fr;}
-    }
-
-    .followOut{
-      white-space:pre-wrap;
-      font-size:16px;
-      line-height:1.35;
-      background: rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:14px;
-      padding:12px;
-      min-height:120px;
-      color:#e9eefc;
+    .boldLabel{
+      font-weight:900;
+      color:var(--text);
+      font-size:12px;
+      margin:10px 0 6px;
+      display:block;
     }
   </style>
 </head>
@@ -258,20 +266,20 @@
   <!-- Controls -->
   <div class="card" id="controls"></div>
 
-  <!-- Generated Size-Up -->
+  <!-- Generated Size-Up (stays before follow-up) -->
   <div class="card">
     <div class="outputTitle"><b>Generated Size-Up</b></div>
     <div class="output" id="outputBox">Make selections to build your size-up.</div>
     <div class="row">
       <button class="btn primary" id="copyBtn">Copy Size-Up</button>
-      <button class="btn danger" id="clearBtn">Clear All</button>
+      <button class="btn danger" id="clearSizeupBtn">Clear Size-Up</button>
     </div>
   </div>
 
-  <!-- Follow-Up Report -->
+  <!-- Follow-Up Report controls & output will come AFTER size-up output -->
   <div class="card">
     <div class="outputTitle"><b>Generated Follow-Up Report</b></div>
-    <div class="followOut" id="followOutputBox">Make selections to build your follow-up report.</div>
+    <div class="output" id="followOutputBox">Make selections to build your follow-up report.</div>
     <div class="row">
       <button class="btn primary" id="copyFollowBtn">Copy Follow-Up</button>
       <button class="btn danger" id="clearFollowBtn">Clear Follow-Up</button>
@@ -286,36 +294,9 @@
     window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));
   }
 
-  // ---------- Core Groups (Size-Up) ----------
+  // ---------- Groups (buttons) ----------
   const CONFIG = [
-    // Battalion / Apparatus
-    { key:"battalion", title:"Battalion", mode:"single", options:[
-      { value:"BC1", label:"BC1", phrase:"BC1" },
-      { value:"BC2", label:"BC2", phrase:"BC2" }
-    ]},
-    { key:"apparatus", title:"Apparatus", mode:"single", options:[
-      { value:"Trk 1",  label:"Trk 1",  phrase:"Trk 1" },
-      { value:"Eng 2",  label:"Eng 2",  phrase:"Eng 2" },
-      { value:"Trk 3",  label:"Trk 3",  phrase:"Trk 3" },
-      { value:"Eng 4",  label:"Eng 4",  phrase:"Eng 4" },
-      { value:"Trk 5",  label:"Trk 5",  phrase:"Trk 5" },
-      { value:"Eng 6",  label:"Eng 6",  phrase:"Eng 6" },
-      { value:"Eng 7",  label:"Eng 7",  phrase:"Eng 7" },
-      { value:"Trk 9",  label:"Trk 9",  phrase:"Trk 9" },
-      { value:"Eng 10", label:"Eng 10", phrase:"Eng 10" },
-      { value:"Trk 11", label:"Trk 11", phrase:"Trk 11" },
-      { value:"Med 1",  label:"Med 1",  phrase:"Med 1" },
-      { value:"Med 2",  label:"Med 2",  phrase:"Med 2" },
-      { value:"Med 3",  label:"Med 3",  phrase:"Med 3" },
-      { value:"Med 5",  label:"Med 5",  phrase:"Med 5" },
-      { value:"Med 6",  label:"Med 6",  phrase:"Med 6" },
-      { value:"Med 7",  label:"Med 7",  phrase:"Med 7" },
-      { value:"Med 9",  label:"Med 9",  phrase:"Med 9" },
-      { value:"Med 10", label:"Med 10", phrase:"Med 10" },
-      { value:"Med 11", label:"Med 11", phrase:"Med 11" }
-    ]},
-
-    // IRR: Building side
+    // IRR building side
     { key:"buildingSize", title:"Building Size", mode:"single", options:[
       { value:"Small",  label:"Small",  phrase:"Small" },
       { value:"Medium", label:"Medium", phrase:"Medium" },
@@ -337,7 +318,7 @@
       { value:"other", label:"Other", phrase:"" }
     ]},
 
-    // IRR: Problem side
+    // IRR problem side
     { key:"conditions", title:"Condition", mode:"single", options:[
       { value:"nothing", label:"Nothing Showing", phrase:"nothing showing" },
       { value:"light", label:"Light Smoke", phrase:"light smoke" },
@@ -372,25 +353,38 @@
       { value:"Primary Search", label:"Primary Search", phrase:"primary search" }
     ]},
 
-    // Strategy
-    { key:"strategy", title:"Strategy", mode:"single", options:[
+    // Strategy confirm/change IAP
+    { key:"confirmStrategy", title:"Confirm Strategy / Change IAP", mode:"single", options:[
       { value:"Offensive", label:"Offensive", phrase:"offensive" },
       { value:"Defensive", label:"Defensive", phrase:"defensive" }
+    ]},
+
+    // Resource determination
+    { key:"resourceDetermination", title:"Resource Determination", mode:"single", options:[
+      { value:"Recall units", label:"Recall units", phrase:"Recall units" },
+      { value:"2nd alarm", label:"2nd alarm", phrase:"2nd alarm" }
     ]}
   ];
 
-  // ---------- Follow-Up Controls ----------
+  // Dropdown data
+  const BATTALIONS = ["", "BC1", "BC2"];
+  const APPARATUS = ["",
+    "Trk 1","Eng 2","Trk 3","Eng 4","Trk 5","Eng 6","Eng 7","Trk 9","Eng 10","Trk 11",
+    "Med 1","Med 2","Med 3","Med 5","Med 6","Med 7","Med 9","Med 10","Med 11"
+  ];
+
+  // Follow-up button group (completed / not completed)
   const FOLLOW = [
     { key:"r360", title:"Results of the 360", mode:"single", options:[
-      { value:"Not completed", label:"Not completed", phrase:"360 not completed" },
-      { value:"Completed", label:"Completed", phrase:"360 completed" },
-      { value:"Free text", label:"Free text", phrase:"" }
+      { value:"Completed", label:"Completed", phrase:"Completed" },
+      { value:"Not completed", label:"Not completed", phrase:"Not completed" }
     ]}
   ];
 
   // ---------- State ----------
   const state = {};
   const fstate = {};
+
   const controlsEl = document.getElementById("controls");
   const outputBox = document.getElementById("outputBox");
   const followOutputBox = document.getElementById("followOutputBox");
@@ -400,7 +394,7 @@
     updateOutputs();
 
     document.getElementById("copyBtn").addEventListener("click", () => copyFrom(outputBox, "Copied size-up!"));
-    document.getElementById("clearBtn").addEventListener("click", clearAll);
+    document.getElementById("clearSizeupBtn").addEventListener("click", clearSizeup);
 
     document.getElementById("copyFollowBtn").addEventListener("click", () => copyFrom(followOutputBox, "Copied follow-up!"));
     document.getElementById("clearFollowBtn").addEventListener("click", clearFollow);
@@ -417,26 +411,19 @@
   }
 
   function onFollowChoice(group, value){
-    if (group.mode === "single") fstate[group.key] = value;
-    else {
-      const current = Array.isArray(fstate[group.key]) ? fstate[group.key] : [];
-      fstate[group.key] = current.includes(value) ? current.filter(v => v !== value) : [...current, value];
-    }
+    fstate[group.key] = value;
     renderControls();
     updateOutputs();
   }
 
-  function renderGroup(groupKey, parentEl){
-    const group = CONFIG.find(g => g.key === groupKey);
-    if (!group) return;
-
+  function renderButtonGroup(group, parentEl){
     const wrap = document.createElement("div");
     wrap.style.marginBottom = "12px";
 
     const title = document.createElement("div");
-    title.className = "group-title";
+    title.style.margin = "0 0 10px 0";
     title.innerHTML = `<b>${group.title}</b>`;
-    wrap.appendChild(title);
+    parentEl.appendChild(title);
 
     const grid = document.createElement("div");
     grid.className = "grid";
@@ -456,7 +443,7 @@
     // Occupancy Other input directly under Occupancy
     if (group.key === "occupancy" && state.occupancy === "other") {
       const label = document.createElement("label");
-      label.textContent = "Occupancy Type (Other) – type here";
+      label.textContent = "Occupancy Type";
       wrap.appendChild(label);
 
       const input = document.createElement("input");
@@ -473,7 +460,7 @@
     // Problem location free-text directly under sides
     if (group.key === "problemSides") {
       const label = document.createElement("label");
-      label.textContent = "Location of the Problem (free text)";
+      label.textContent = "Location of the Problem";
       wrap.appendChild(label);
 
       const input = document.createElement("input");
@@ -490,148 +477,275 @@
     parentEl.appendChild(wrap);
   }
 
-  function renderFollow(parentEl){
+  function renderDropdownBlock(parentEl){
+    const block = document.createElement("div");
+    block.className = "block ops";
+    block.innerHTML = `<h2>Batt / Apparatus</h2>`;
+
+    const row = document.createElement("div");
+    row.className = "selectRow";
+
+    const battWrap = document.createElement("div");
+    const battLabel = document.createElement("label");
+    battLabel.textContent = "Battalion";
+    battWrap.appendChild(battLabel);
+
+    const battSel = document.createElement("select");
+    BATTALIONS.forEach(v => {
+      const opt = document.createElement("option");
+      opt.value = v;
+      opt.textContent = v || "Select Battalion…";
+      battSel.appendChild(opt);
+    });
+    battSel.value = state.battalion || "";
+    battSel.addEventListener("change", (e) => {
+      state.battalion = e.target.value;
+      updateOutputs();
+    });
+    battWrap.appendChild(battSel);
+
+    const appWrap = document.createElement("div");
+    const appLabel = document.createElement("label");
+    appLabel.textContent = "Apparatus";
+    appWrap.appendChild(appLabel);
+
+    const appSel = document.createElement("select");
+    APPARATUS.forEach(v => {
+      const opt = document.createElement("option");
+      opt.value = v;
+      opt.textContent = v || "Select Apparatus…";
+      appSel.appendChild(opt);
+    });
+    appSel.value = state.apparatus || "";
+    appSel.addEventListener("change", (e) => {
+      state.apparatus = e.target.value;
+      updateOutputs();
+    });
+    appWrap.appendChild(appSel);
+
+    row.appendChild(battWrap);
+    row.appendChild(appWrap);
+
+    block.appendChild(row);
+    parentEl.appendChild(block);
+  }
+
+  function renderFollowBlock(parentEl){
+    const block = document.createElement("div");
+    block.className = "block follow";
+    block.innerHTML = `<h2>Follow Up Report</h2>`;
+
     // Results of the 360 buttons
     const group = FOLLOW[0];
 
-    const wrap = document.createElement("div");
-    wrap.style.marginBottom = "12px";
-
     const title = document.createElement("div");
-    title.className = "group-title";
+    title.style.margin = "0 0 10px 0";
     title.innerHTML = `<b>${group.title}</b>`;
-    wrap.appendChild(title);
+    block.appendChild(title);
 
     const grid = document.createElement("div");
     grid.className = "grid";
-
     group.options.forEach(opt => {
       const btn = document.createElement("button");
       btn.className = "choice";
-      btn.textContent = opt.label;
       btn.dataset.fkey = group.key;
       btn.dataset.fvalue = opt.value;
+      btn.textContent = opt.label;
       btn.addEventListener("click", () => onFollowChoice(group, opt.value));
       grid.appendChild(btn);
     });
-    wrap.appendChild(grid);
+    block.appendChild(grid);
 
-    // If Free text selected, show a free text box directly underneath
-    if (fstate.r360 === "Free text") {
-      const label = document.createElement("label");
-      label.textContent = "Results of the 360 (free text)";
-      wrap.appendChild(label);
+    // Additional information (always available)
+    const addLabel = document.createElement("label");
+    addLabel.textContent = "Additional information";
+    block.appendChild(addLabel);
 
-      const input = document.createElement("input");
-      input.type = "text";
-      input.placeholder = "e.g., 360 complete, Charlie-side access blocked, utilities secured…";
-      input.value = fstate.r360text || "";
-      input.addEventListener("input", (e) => {
-        fstate.r360text = e.target.value;
-        updateOutputs();
-      });
-      wrap.appendChild(input);
-    }
+    const addInput = document.createElement("input");
+    addInput.type = "text";
+    addInput.placeholder = "Optional notes…";
+    addInput.value = fstate.additional || "";
+    addInput.addEventListener("input", (e) => {
+      fstate.additional = e.target.value;
+      updateOutputs();
+    });
+    block.appendChild(addInput);
 
-    // Immediate safety concerns: free text
-    const label2 = document.createElement("label");
-    label2.textContent = "Immediate safety concerns (free text)";
-    wrap.appendChild(label2);
+    // Immediate safety concerns (bold label)
+    const safLabel = document.createElement("span");
+    safLabel.className = "boldLabel";
+    safLabel.textContent = "Immediate safety concerns";
+    block.appendChild(safLabel);
 
-    const input2 = document.createElement("input");
-    input2.type = "text";
-    input2.placeholder = "e.g., power lines down, propane tank involved, unstable wall, victims reported…";
-    input2.value = fstate.safety || "";
-    input2.addEventListener("input", (e) => {
+    const safInput = document.createElement("input");
+    safInput.type = "text";
+    safInput.placeholder = "e.g., power lines down, propane, unstable wall…";
+    safInput.value = fstate.safety || "";
+    safInput.addEventListener("input", (e) => {
       fstate.safety = e.target.value;
       updateOutputs();
     });
-    wrap.appendChild(input2);
+    block.appendChild(safInput);
 
-    parentEl.appendChild(wrap);
+    // Confirm Strategy / Change IAP (buttons)
+    const confirmGroup = CONFIG.find(g => g.key === "confirmStrategy");
+    const cTitle = document.createElement("div");
+    cTitle.style.margin = "12px 0 10px 0";
+    cTitle.innerHTML = `<b>${confirmGroup.title}</b>`;
+    block.appendChild(cTitle);
+
+    const cGrid = document.createElement("div");
+    cGrid.className = "grid";
+    confirmGroup.options.forEach(opt => {
+      const btn = document.createElement("button");
+      btn.className = "choice";
+      btn.dataset.fkey = "confirmStrategy";
+      btn.dataset.fvalue = opt.value;
+      btn.textContent = opt.label;
+      btn.addEventListener("click", () => {
+        fstate.confirmStrategy = opt.value;
+        renderControls();
+        updateOutputs();
+      });
+      cGrid.appendChild(btn);
+    });
+    block.appendChild(cGrid);
+
+    // Confirm strategy free text
+    const cTextLabel = document.createElement("label");
+    cTextLabel.textContent = "Notes";
+    block.appendChild(cTextLabel);
+
+    const cTextInput = document.createElement("input");
+    cTextInput.type = "text";
+    cTextInput.placeholder = "Optional notes…";
+    cTextInput.value = fstate.confirmNotes || "";
+    cTextInput.addEventListener("input", (e) => {
+      fstate.confirmNotes = e.target.value;
+      updateOutputs();
+    });
+    block.appendChild(cTextInput);
+
+    // Resource determination
+    const resGroup = CONFIG.find(g => g.key === "resourceDetermination");
+    const rTitle = document.createElement("div");
+    rTitle.style.margin = "12px 0 10px 0";
+    rTitle.innerHTML = `<b>${resGroup.title}</b>`;
+    block.appendChild(rTitle);
+
+    const rGrid = document.createElement("div");
+    rGrid.className = "grid";
+    resGroup.options.forEach(opt => {
+      const btn = document.createElement("button");
+      btn.className = "choice";
+      btn.dataset.fkey = "resourceDetermination";
+      btn.dataset.fvalue = opt.value;
+      btn.textContent = opt.label;
+      btn.addEventListener("click", () => {
+        fstate.resourceDetermination = opt.value;
+        renderControls();
+        updateOutputs();
+      });
+      rGrid.appendChild(btn);
+    });
+    block.appendChild(rGrid);
+
+    parentEl.appendChild(block);
   }
 
   function renderControls(){
     controlsEl.innerHTML = "";
 
-    // --- Batt / Apparatus ---
-    const ops = document.createElement("div");
-    ops.className = "block ops";
-    ops.innerHTML = `<h2>Battalion / Apparatus</h2>`;
-    renderGroup("battalion", ops);
-    renderGroup("apparatus", ops);
-    controlsEl.appendChild(ops);
+    // 1) Batt + Apparatus dropdowns side-by-side
+    renderDropdownBlock(controlsEl);
 
-    // --- IRR wrapper with two columns ---
+    // 2) IRR (two columns)
     const irr = document.createElement("div");
     irr.className = "irrWrap";
     irr.innerHTML = `<div class="irrTitle">IRR</div>`;
+    const cols = document.createElement("div");
+    cols.className = "twoCol";
 
-    const irrCols = document.createElement("div");
-    irrCols.className = "twoCol";
+    const building = document.createElement("div");
+    building.className = "block building";
+    building.innerHTML = `<h2>Building Description</h2>`;
+    renderButtonGroup(CONFIG.find(g => g.key==="buildingSize"), building);
+    renderButtonGroup(CONFIG.find(g => g.key==="height"), building);
+    renderButtonGroup(CONFIG.find(g => g.key==="occupancy"), building);
 
-    const b = document.createElement("div");
-    b.className = "block building";
-    b.innerHTML = `<h2>Building Description</h2>`;
-    renderGroup("buildingSize", b);
-    renderGroup("height", b);
-    renderGroup("occupancy", b);
+    const problem = document.createElement("div");
+    problem.className = "block problem";
+    problem.innerHTML = `<h2>Problem Description</h2>`;
+    renderButtonGroup(CONFIG.find(g => g.key==="conditions"), problem);
+    renderButtonGroup(CONFIG.find(g => g.key==="problemSides"), problem);
 
-    const p = document.createElement("div");
-    p.className = "block problem";
-    p.innerHTML = `<h2>Problem Description</h2>`;
-    renderGroup("conditions", p);
-    renderGroup("problemSides", p);
-
-    irrCols.appendChild(b);
-    irrCols.appendChild(p);
-    irr.appendChild(irrCols);
+    cols.appendChild(building);
+    cols.appendChild(problem);
+    irr.appendChild(cols);
     controlsEl.appendChild(irr);
 
-    // --- IAP + Strategy row ---
+    // 3) IAP (left) and Strategy+Command (right) in same box
     const row = document.createElement("div");
     row.className = "miniRow";
 
     const iap = document.createElement("div");
     iap.className = "block iap";
     iap.innerHTML = `<h2>Initial Action Plan</h2>`;
-    renderGroup("iapTasks", iap);
-    renderGroup("iapLocation", iap);
-    renderGroup("iapObjectives", iap);
+    renderButtonGroup(CONFIG.find(g => g.key==="iapTasks"), iap);
+    renderButtonGroup(CONFIG.find(g => g.key==="iapLocation"), iap);
+    renderButtonGroup(CONFIG.find(g => g.key==="iapObjectives"), iap);
 
-    const strat = document.createElement("div");
-    strat.className = "block strategy";
-    strat.innerHTML = `<h2>Strategy</h2>`;
-    renderGroup("strategy", strat);
-
-    row.appendChild(iap);
-    row.appendChild(strat);
-    controlsEl.appendChild(row);
-
-    // --- Command (full width) ---
     const cmd = document.createElement("div");
-    cmd.className = "block command";
-    cmd.innerHTML = `<h2>Command</h2>`;
-    const label = document.createElement("label");
-    label.textContent = "Command Free Text";
-    cmd.appendChild(label);
-    const input = document.createElement("input");
-    input.type = "text";
-    input.placeholder = "e.g., Trk 1 is now Main Street Command";
-    input.value = state.commandText || "";
-    input.addEventListener("input", (e) => {
+    cmd.className = "block cmd";
+    cmd.innerHTML = `<h2>Strategy / Command</h2>`;
+
+    // Strategy buttons (use existing CONFIG key "strategy"? We removed it.
+    // We'll use confirmStrategy for strategy selection in size-up too? No: size-up needs Strategy in output.
+    // We'll store size-up strategy in state.strategy, with buttons here:
+    const stratLabel = document.createElement("div");
+    stratLabel.style.margin = "0 0 10px 0";
+    stratLabel.innerHTML = `<b>Strategy</b>`;
+    cmd.appendChild(stratLabel);
+
+    const stratGrid = document.createElement("div");
+    stratGrid.className = "grid";
+    ["Offensive","Defensive"].forEach(v => {
+      const btn = document.createElement("button");
+      btn.className = "choice";
+      btn.dataset.key = "strategy";
+      btn.dataset.value = v;
+      btn.textContent = v;
+      btn.addEventListener("click", () => {
+        state.strategy = v;
+        renderControls();
+        updateOutputs();
+      });
+      stratGrid.appendChild(btn);
+    });
+    cmd.appendChild(stratGrid);
+
+    const cmdLabel = document.createElement("label");
+    cmdLabel.textContent = "Command";
+    cmd.appendChild(cmdLabel);
+
+    const cmdInput = document.createElement("input");
+    cmdInput.type = "text";
+    cmdInput.placeholder = "e.g., Trk 1 is now Main Street Command";
+    cmdInput.value = state.commandText || "";
+    cmdInput.addEventListener("input", (e) => {
       state.commandText = e.target.value;
       updateOutputs();
     });
-    cmd.appendChild(input);
-    controlsEl.appendChild(cmd);
+    cmd.appendChild(cmdInput);
 
-    // --- Follow-Up (full width) ---
-    const follow = document.createElement("div");
-    follow.className = "block follow";
-    follow.innerHTML = `<h2>Follow Up Report</h2>`;
-    renderFollow(follow);
-    controlsEl.appendChild(follow);
+    row.appendChild(iap);
+    row.appendChild(cmd);
+    controlsEl.appendChild(row);
+
+    // 4) Follow Up Report (after generated size-up in the page layout, but controls are here still)
+    // You asked: "generated size up, then start the next section with follow up report."
+    // Controls are above outputs; to match your request visually, we keep follow-up controls below this line:
+    renderFollowBlock(controlsEl);
 
     refreshSelectedUI();
   }
@@ -642,19 +756,23 @@
       if (btn.dataset.key) {
         const key = btn.dataset.key;
         const value = btn.dataset.value;
+        if (key === "strategy") {
+          btn.classList.toggle("selected", (state.strategy || "") === value);
+          return;
+        }
         const group = CONFIG.find(g => g.key === key);
+        if (!group) return;
         const current = state[key];
         const selected = (group.mode === "single")
           ? current === value
           : Array.isArray(current) && current.includes(value);
         btn.classList.toggle("selected", selected);
       }
-      // follow buttons (same .choice class)
+      // follow-up buttons
       if (btn.dataset.fkey) {
-        const key = btn.dataset.fkey;
-        const value = btn.dataset.fvalue;
-        const current = fstate[key];
-        btn.classList.toggle("selected", current === value);
+        const k = btn.dataset.fkey;
+        const v = btn.dataset.fvalue;
+        btn.classList.toggle("selected", (fstate[k] || "") === v);
       }
     });
   }
@@ -678,17 +796,17 @@
   }
 
   function updateOutputs(){
-    // --------- SIZE-UP PARAGRAPH ----------
+    // ---------- SIZE-UP ----------
     const battalion = (state.battalion || "").trim();
     const apparatus = (state.apparatus || "").trim();
 
     const bSize = (state.buildingSize || "").trim();
-    const bHeight = singlePhrase("height"); // "2 story"
+    const bHeight = singlePhrase("height");
     let occ = "";
     if (state.occupancy === "other") occ = (state.occupancyOther || "").trim();
     else if (state.occupancy) occ = optionPhrase("occupancy", state.occupancy);
 
-    const condition = singlePhrase("conditions"); // "heavy smoke"
+    const condition = singlePhrase("conditions");
     const sides = multiList("problemSides");
     const sidesText = sides.length ? niceSidesDisplay(sides) : "";
     const locFree = (state.problemLocationText || "").trim();
@@ -697,7 +815,7 @@
     const iapLoc = singlePhrase("iapLocation");
     const objectives = multiList("iapObjectives").map(v => optionPhrase("iapObjectives", v)).filter(Boolean);
 
-    const strategy = singlePhrase("strategy") || "offensive";
+    const strategy = (state.strategy || "Offensive").toLowerCase();
     const cmdText = (state.commandText || "").trim();
 
     const buildingParts = [bSize, bHeight, occ].filter(Boolean);
@@ -728,23 +846,23 @@
 
     outputBox.textContent = [line1, line2, line3].join("\n\n");
 
-    // --------- FOLLOW-UP PARAGRAPH ----------
-    let r360 = "";
-    if (fstate.r360 === "Not completed") r360 = "360 not completed.";
-    if (fstate.r360 === "Completed") r360 = "360 completed.";
-    if (fstate.r360 === "Free text") {
-      r360 = (fstate.r360text || "").trim();
-      if (r360 && !r360.endsWith(".")) r360 += ".";
-    }
+    // ---------- FOLLOW-UP REPORT ----------
+    const r360 = (fstate.r360 || "").trim();
+    const additional = (fstate.additional || "").trim();
     const safety = (fstate.safety || "").trim();
-    const safetyLine = safety ? `Immediate safety concerns: ${safety}${safety.endsWith(".") ? "" : "."}` : "";
+    const confirmStrat = (fstate.confirmStrategy || "").trim();
+    const confirmNotes = (fstate.confirmNotes || "").trim();
+    const resource = (fstate.resourceDetermination || "").trim();
 
-    const followLines = [];
-    if (r360) followLines.push(`Results of the 360: ${r360}`);
-    if (safetyLine) followLines.push(safetyLine);
-    if (!followLines.length) followLines.push("Follow-up report: (make selections above).");
+    const lines = [];
+    if (r360) lines.push(`Results of the 360: ${r360}.`);
+    if (additional) lines.push(`Additional information: ${additional}${additional.endsWith(".") ? "" : "."}`);
+    if (safety) lines.push(`Immediate safety concerns: ${safety}${safety.endsWith(".") ? "" : "."}`);
+    if (confirmStrat) lines.push(`Confirm Strategy/Change IAP: ${confirmStrat}${confirmNotes ? " — " + confirmNotes : ""}.`);
+    if (resource) lines.push(`Resource determination: ${resource}.`);
 
-    followOutputBox.textContent = followLines.join("\n");
+    if (!lines.length) lines.push("Follow-up report: (make selections above).");
+    followOutputBox.textContent = lines.join("\n");
   }
 
   async function copyFrom(el, msg){
@@ -763,9 +881,10 @@
     }
   }
 
-  function clearAll(){
+  function clearSizeup(){
+    // Clear only size-up state
+    const keep = {}; // nothing
     Object.keys(state).forEach(k => delete state[k]);
-    Object.keys(fstate).forEach(k => delete fstate[k]);
     renderControls();
     updateOutputs();
   }
