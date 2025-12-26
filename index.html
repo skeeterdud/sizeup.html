@@ -454,38 +454,55 @@
     wrap.appendChild(grid);
 
     // Occupancy Other input directly under Occupancy
-    if (group.key === "occupancy" && state.occupancy === "other") {
-      const label = document.createElement("label");
-      label.textContent = "Occupancy Type";
-      wrap.appendChild(label);
+if (group.key === "occupancy" && state.occupancy === "other") {
+  const label = document.createElement("label");
+  label.textContent = "Occupancy Type";
+  wrap.appendChild(label);
 
-      const input = document.createElement("input");
-      input.type = "text";
-      input.placeholder = "e.g., school, church, warehouse…";
-      input.value = state.occupancyOther || "";
-      input.addEventListener("input", (e) => {
-        state.occupancyOther = e.target.value;
-        updateOutputs();
-      });
-      wrap.appendChild(input);
-    }
+  const input = document.createElement("input");
+  input.type = "text";
+  input.placeholder = "e.g., school, church, warehouse…";
+  input.value = state.occupancyOther || "";
+  input.addEventListener("input", (e) => {
+    state.occupancyOther = e.target.value;
+    updateOutputs();
+  });
+  wrap.appendChild(input);
+}
 
-    // Problem location free-text directly under sides
-    if (group.key === "problemSides") {
-      const label = document.createElement("label");
-      label.textContent = "Location of the Problem";
-      wrap.appendChild(label);
+// Problem location free-text directly under sides
+if (group.key === "problemSides") {
+  const label = document.createElement("label");
+  label.textContent = "Location of the Problem";
+  wrap.appendChild(label);
 
-      const input = document.createElement("input");
-      input.type = "text";
-      input.placeholder = "e.g., 2nd floor / roof line / rear storage…";
-      input.value = state.problemLocationText || "";
-      input.addEventListener("input", (e) => {
-        state.problemLocationText = e.target.value;
-        updateOutputs();
-      });
-      wrap.appendChild(input);
-    }
+  const input = document.createElement("input");
+  input.type = "text";
+  input.placeholder = "e.g., 2nd floor / roof line / rear storage…";
+  input.value = state.problemLocationText || "";
+  input.addEventListener("input", (e) => {
+    state.problemLocationText = e.target.value;
+    updateOutputs();
+  });
+  wrap.appendChild(input);
+}
+
+/* 🔹 NEW: IAP “Other” location free-text */
+if (group.key === "iapLocation" && state.iapLocation === "other") {
+  const label = document.createElement("label");
+  label.textContent = "IAP Location (Other)";
+  wrap.appendChild(label);
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.placeholder = "e.g., interior stairwell, basement, roof division…";
+  input.value = state.iapLocationOther || "";
+  input.addEventListener("input", (e) => {
+    state.iapLocationOther = e.target.value;
+    updateOutputs();
+  });
+  wrap.appendChild(input);
+}
 
     parentEl.appendChild(wrap);
   }
