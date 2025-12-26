@@ -715,25 +715,25 @@ function ensurePeriod(s){
       grid.appendChild(btn);
     });
     block.appendChild(grid);
-// 360 Findings (only show once a 360 option is selected)
-if ((fstate.r360 || "").trim()) {
-  const fLabel = document.createElement("label");
-  fLabel.textContent = "360 Findings";
-  block.appendChild(fLabel);
 
-  const fInput = document.createElement("input");
-  fInput.type = "text";
-  fInput.placeholder = "e.g., fire located in kitchen; utilities controlled; victim located; exposures…";
-  fInput.value = fstate.r360Findings || "";
-  fInput.addEventListener("input", (e) => {
-  // store raw while typing
-  fstate.r360Findings = e.target.value;
-  updateOutputs();
-});
+    // 360 Findings (only show once a 360 option is selected)
+    if ((fstate.r360 || "").trim()) {
+      const fLabel = document.createElement("label");
+      fLabel.textContent = "360 Findings";
+      block.appendChild(fLabel);
 
-  });
-  block.appendChild(fInput);
-}
+      const fInput = document.createElement("input");
+      fInput.type = "text";
+      fInput.placeholder = "e.g., fire located in kitchen; utilities controlled; victim located; exposures…";
+      fInput.value = fstate.r360Findings || "";
+      fInput.addEventListener("input", (e) => {
+        // store raw while typing
+        fstate.r360Findings = e.target.value;
+        updateOutputs();
+      });
+
+      block.appendChild(fInput);
+    }
 
     // Safety concerns: two buttons side-by-side
     renderTwoButtonSingle(block, "Immediate safety concerns", "safetyMode", "Safety concerns", "None noted");
@@ -1007,7 +1007,7 @@ if ((fstate.r360 || "").trim()) {
 
     const objectives = multiList("iapObjectives").map(v => optionPhrase("iapObjectives", v)).filter(Boolean);
 
-    const strategy = (state.strategy || "Offensive").toLowerCase();
+    const strategy = (state.strategy || "Offensive");
     const cmdText = normalizeCommandName(state.commandText);
 
     const buildingParts = [bSize, bHeight, occ].filter(Boolean);
@@ -1043,80 +1043,76 @@ if ((fstate.r360 || "").trim()) {
     outputBox.textContent = [line1, line2, line3].join("\n\n");
 
     // ---------- FOLLOW-UP ----------
-    // ---------- FOLLOW-UP ----------
-const fBattalion = battalionDisplay(state.battalion);
-const fCommand = normalizeCommandName(state.commandText);
+    const fBattalion = battalionDisplay(state.battalion);
+    const fCommand = normalizeCommandName(state.commandText);
 
-const r360 = (fstate.r360 || "").trim();                 // ✅ DEFINE r360
-const r360Findings = (fstate.r360Findings || "").trim(); // ✅ ONLY ONCE
+    const r360 = (fstate.r360 || "").trim();
+    const r360Findings = (fstate.r360Findings || "").trim();
 
-const safetyMode = (fstate.safetyMode || "").trim();
-const safetyText = (fstate.safetyText || "").trim();
+    const safetyMode = (fstate.safetyMode || "").trim();
+    const safetyText = (fstate.safetyText || "").trim();
 
-const changeIap = (fstate.changeIap || "").trim();
-const confirmStrat = ((fstate.confirmStrategy || state.strategy || "Offensive") + "")
-  .trim()
-  .toLowerCase();
+    const changeIap = (fstate.changeIap || "").trim();
+    const confirmStrat = ((fstate.confirmStrategy || state.strategy || "Offensive") + "")
+      .trim();
 
-const resource = (fstate.resourceDetermination || "").trim();
+    const resource = (fstate.resourceDetermination || "").trim();
 
-// build new IAP phrase (if change IAP = Yes)
-let newIapLine = "";
-if (changeIap === "Yes") {
-  const ntasks = (Array.isArray(fstate.newIapTasks) ? fstate.newIapTasks : [])
-    .map(v => optionPhrase("iapTasks", v))
-    .filter(Boolean);
+    // build new IAP phrase (if change IAP = Yes)
+    let newIapLine = "";
+    if (changeIap === "Yes") {
+      const ntasks = (Array.isArray(fstate.newIapTasks) ? fstate.newIapTasks : [])
+        .map(v => optionPhrase("iapTasks", v))
+        .filter(Boolean);
 
-  const nloc = buildIapLocationPhrase(fstate.newIapLocation, fstate.newIapLocationOther);
+      const nloc = buildIapLocationPhrase(fstate.newIapLocation, fstate.newIapLocationOther);
 
-  const nobj = (Array.isArray(fstate.newIapObjectives) ? fstate.newIapObjectives : [])
-    .map(v => optionPhrase("iapObjectives", v))
-    .filter(Boolean);
+      const nobj = (Array.isArray(fstate.newIapObjectives) ? fstate.newIapObjectives : [])
+        .map(v => optionPhrase("iapObjectives", v))
+        .filter(Boolean);
 
-  const t = ntasks.length ? ntasks.join(", ") : "operating";
-  const o = nobj.length ? ` for ${nobj.join(", ")}` : "";
-  const l = nloc ? ` on the ${nloc}` : "";
+      const t = ntasks.length ? ntasks.join(", ") : "operating";
+      const o = nobj.length ? ` for ${nobj.join(", ")}` : "";
+      const l = nloc ? ` on the ${nloc}` : "";
 
-  // ✅ Required opening phrase when Change IAP = Yes
-  newIapLine = `There is a change to the IAP, ${state.apparatus ? state.apparatus + " " : ""}will be ${t}${l}${o}.`;
-}
+      newIapLine = `There is a change to the IAP, ${state.apparatus ? state.apparatus + " " : ""}will be ${t}${l}${o}.`;
+    }
 
-const parts = [];
+    const parts = [];
 
-// Lead-in sentence (Battalion + From Command + 360 + findings)
-let lead =
-  `${fBattalion ? fBattalion + " " : ""}` +
-  `${fCommand ? "From " + fCommand + ", " : ""}`;
+    // Lead-in sentence (Battalion + From Command + 360 + findings)
+    let lead =
+      `${fBattalion ? fBattalion + " " : ""}` +
+      `${fCommand ? "From " + fCommand + ", " : ""}`;
 
-if (r360) {
-  lead += `360 was ${r360}`;
-  if (r360Findings) lead += `, ${r360Findings}`;
-}
+    if (r360) {
+      lead += `360 was ${r360}`;
+      if (r360Findings) lead += `, ${r360Findings}`;
+    }
 
-lead = lead.trim();
-if (lead) parts.push(lead + (lead.endsWith(".") ? "" : ","));
+    lead = lead.trim();
+    if (lead) parts.push(lead + (lead.endsWith(".") ? "" : ","));
 
-// Safety sentence
-if (safetyMode === "None noted") {
-  // ✅ Your requested wording
-  parts.push("no safety concerns noted,");
-} else if (safetyMode === "Safety concerns") {
-  parts.push(`${safetyText ? safetyText : "Safety concerns noted"},`);
-}
+    // Safety sentence
+    if (safetyMode === "None noted") {
+      parts.push("no safety concerns noted,");
+    } else if (safetyMode === "Safety concerns") {
+      parts.push(`${safetyText ? safetyText : "Safety concerns noted"},`);
+    }
 
-// Change IAP (only if Yes)
-if (newIapLine) parts.push(newIapLine.endsWith(".") ? newIapLine : (newIapLine + "."));
+    // Change IAP (only if Yes)
+    if (newIapLine) parts.push(newIapLine.endsWith(".") ? newIapLine : (newIapLine + "."));
 
-// Strategy sentence
-parts.push(`We are remaining in the ${confirmStrat} strategy.`);
+    // Strategy sentence
+    parts.push(`We are remaining in the ${confirmStrat.toLowerCase()} strategy.`);
 
-// Resource determination sentence
-if (resource === "Recall units") parts.push("Recall units.");
-if (resource === "2nd alarm") parts.push("Give me a 2nd alarm.");
+    // Resource determination sentence
+    if (resource === "Recall units") parts.push("Recall units.");
+    if (resource === "2nd alarm") parts.push("Give me a 2nd alarm.");
 
-// Final output
-const cleaned = parts.join(" ").replace(/\s+/g," ").trim();
-followOutputBox.textContent = cleaned || "Follow-up report: (make selections above).";
+    // Final output
+    const cleaned = parts.join(" ").replace(/\s+/g," ").trim();
+    followOutputBox.textContent = cleaned || "Follow-up report: (make selections above).";
 
   }
 
