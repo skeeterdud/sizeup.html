@@ -491,7 +491,6 @@ if (group.key === "problemSides") {
 
 /* 🔹 NEW: IAP “Other” location free-text */
 if (group.key === "iapLocation" && Array.isArray(state.iapLocation) && state.iapLocation.includes("other")) {
-
   const label = document.createElement("label");
   label.textContent = "IAP Location (Other)";
   wrap.appendChild(label);
@@ -502,26 +501,6 @@ if (group.key === "iapLocation" && Array.isArray(state.iapLocation) && state.iap
   input.value = state.iapLocationOther || "";
   input.addEventListener("input", (e) => {
     state.iapLocationOther = e.target.value;
-  function buildIapLocationPhrase(iapLocArr, otherText){
-  const arr = Array.isArray(iapLocArr) ? iapLocArr : [];
-  const parts = [];
-
-  for (const v of arr) {
-    if (v === "other") continue;
-    parts.push(mapIapLocation(v)); // alpha -> "alpha side", 1st Floor -> "1st floor"
-  }
-
-  const other = (otherText || "").trim();
-  if (arr.includes("other") && other) parts.push(other.toLowerCase());
-
-  // remove duplicates (just in case)
-  const uniq = [...new Set(parts)].filter(Boolean);
-
-  // join cleanly
-  return uniq.join(", ");
-}
- 
-    
     updateOutputs();
   });
   wrap.appendChild(input);
@@ -872,6 +851,23 @@ if (followCard) {
 
   // Fallback
   return lower;
+}
+function buildIapLocationPhrase(iapLocArr, otherText){
+  const arr = Array.isArray(iapLocArr) ? iapLocArr : [];
+  const parts = [];
+
+  for (const v of arr) {
+    if (v === "other") continue;
+    parts.push(mapIapLocation(v)); // alpha -> "alpha side", 1st Floor -> "1st floor"
+  }
+
+  const other = (otherText || "").trim();
+  if (arr.includes("other") && other) parts.push(other.toLowerCase());
+
+  // remove duplicates (just in case)
+  const uniq = [...new Set(parts)].filter(Boolean);
+
+  return uniq.join(", ");
 }
 
 function normalizeCommandName(raw){
