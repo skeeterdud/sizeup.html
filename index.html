@@ -861,7 +861,13 @@ if (followCard) {
     const locFree = (state.problemLocationText || "").trim();
 
     const tasks = multiList("iapTasks").map(v => optionPhrase("iapTasks", v)).filter(Boolean);
-    const iapLoc = singlePhrase("iapLocation");
+    let iapLoc = "";
+    if (state.iapLocation === "other") {
+      iapLoc = (state.iapLocationOther || "").trim();
+    } else {
+      iapLoc = singlePhrase("iapLocation");
+    }
+
     const objectives = multiList("iapObjectives").map(v => optionPhrase("iapObjectives", v)).filter(Boolean);
 
     const strategy = (state.strategy || "Offensive").toLowerCase();
