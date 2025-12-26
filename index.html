@@ -693,28 +693,20 @@ function ensurePeriod(s){
     block.className = "block follow";
     block.innerHTML = `<h2>Follow Up Report</h2>`;
 
-    // 360 (completed / not completed)
-    const title = document.createElement("div");
-    title.style.margin = "0 0 10px 0";
-    title.innerHTML = `<b>Results of the 360</b>`;
-    block.appendChild(title);
-
-    const grid = document.createElement("div");
-    grid.className = "grid";
     ["Completed","Not completed"].forEach(v => {
-      const btn = document.createElement("button");
-      btn.className = "choice";
-      btn.dataset.fkey = "r360";
-      btn.dataset.fvalue = v;
-      btn.textContent = v;
-      btn.addEventListener("click", () => {
-        fstate.r360 = v;
-        refreshSelectedUI();
-        updateOutputs();
-      });
-      grid.appendChild(btn);
-    });
-    block.appendChild(grid);
+  const btn = document.createElement("button");
+  btn.className = "choice";
+  btn.dataset.fkey = "r360";
+  btn.dataset.fvalue = v;
+  btn.textContent = v;
+  btn.addEventListener("click", () => {
+    fstate.r360 = v;
+    refreshSelectedUI();
+    renderControls();   // 🔹 re-render follow-up block so the input appears
+    updateOutputs();
+  });
+  grid.appendChild(btn);
+});
 
     // 360 Findings (only show once a 360 option is selected)
     if ((fstate.r360 || "").trim()) {
