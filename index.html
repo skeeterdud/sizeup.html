@@ -833,12 +833,8 @@ if (followCard) {
   function niceSidesDisplay(sidesArr){
     return sidesArr.map(s => s.toLowerCase()).join(" ");
   }
-  function normalizeCommandName(raw){
-  let s = (raw || "").trim();
-  if (!s) return "";
-  }
   function mapIapLocation(val){
-    if (!val) return "";
+  if (!val) return "";
   const lower = String(val).toLowerCase();
 
   // Sides → add "side"
@@ -846,14 +842,18 @@ if (followCard) {
     return `${lower} side`;
   }
 
-  // Floors → leave as-is (just normalize case)
+  // Floors → no "side"
   if (lower.includes("floor")) {
     return lower; // "1st floor", "2nd floor", etc.
   }
 
-  // Fallback: just return the text
+  // Fallback
   return lower;
 }
+
+function normalizeCommandName(raw){
+  let s = (raw || "").trim();
+  if (!s) return "";
 
   // If they already ended with "Command" (or "command."), keep it
   if (/command\.?$/i.test(s)) return s.replace(/\.*$/,"");
