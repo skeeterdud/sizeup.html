@@ -435,6 +435,28 @@
     if (/command\.?$/i.test(s)) return s.replace(/\.*$/,"");
     return `${s} Command`;
   }
+function cleanInlineText(raw){
+  let s = (raw || "").trim();
+
+  // remove leading commas/periods/dashes etc.
+  s = s.replace(/^[,.;:\-\s]+/, "").trim();
+
+  // collapse repeated spaces
+  s = s.replace(/\s+/g, " ");
+
+  // capitalize first letter
+  if (s.length) s = s.charAt(0).toUpperCase() + s.slice(1);
+
+  return s;
+}
+
+// If you want findings to always end with a period, use this.
+// If you *don't* want auto periods, skip this function and don't call it.
+function ensurePeriod(s){
+  const t = (s || "").trim();
+  if (!t) return "";
+  return /[.!?]$/.test(t) ? t : (t + ".");
+}
 
   function battalionDisplay(code){
     const c = (code || "").trim();
@@ -704,8 +726,11 @@ if ((fstate.r360 || "").trim()) {
   fInput.placeholder = "e.g., fire located in kitchen; utilities controlled; victim located; exposures…";
   fInput.value = fstate.r360Findings || "";
   fInput.addEventListener("input", (e) => {
-    fstate.r360Findings = e.target.value;
-    updateOutputs();
+  // store raw while typing
+  fstate.r360Findings = e.target.value;
+  updateOutputs();
+});
+
   });
   block.appendChild(fInput);
 }
