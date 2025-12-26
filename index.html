@@ -869,6 +869,12 @@ function buildIapLocationPhrase(iapLocArr, otherText){
 
   return uniq.join(", ");
 }
+function formatBattalion(val){
+  const v = (val || "").trim().toUpperCase();
+  if (v === "BC1") return "Battalion 1";
+  if (v === "BC2") return "Battalion 2";
+  return ""; // if blank or anything else
+}
 
 function normalizeCommandName(raw){
   let s = (raw || "").trim();
@@ -883,7 +889,7 @@ function normalizeCommandName(raw){
 
   function updateOutputs(){
     // ---------- SIZE-UP ----------
-    const battalion = (state.battalion || "").trim();
+    const battalion = formatBattalion(state.battalion);
     const apparatus = (state.apparatus || "").trim();
 
     const bSize = (state.buildingSize || "").trim();
