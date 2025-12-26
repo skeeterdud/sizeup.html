@@ -1028,7 +1028,8 @@
       const l = nloc ? ` on the ${nloc}` : "";
 
       // "read just like the IAP from generate size up"
-      newIapLine = `${state.apparatus ? state.apparatus + " " : ""}will be ${t}${l}${o}.`;
+      // "read just like the IAP from generate size up"
+newIapLine = `There is a change to the IAP, ${state.apparatus ? state.apparatus + " " : ""}will be ${t}${l}${o}.`;
     }
 
     const parts = [];
@@ -1043,7 +1044,7 @@
 
     // safety sentence
     if (safetyMode === "None noted") {
-      parts.push("None noted, no safety concerns,");
+      parts.push("no safety concerns,");
     } else if (safetyMode === "Safety concerns") {
       parts.push(`${safetyText ? safetyText : "Safety concerns noted"},`);
     }
