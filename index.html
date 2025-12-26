@@ -836,9 +836,9 @@ if (followCard) {
   function normalizeCommandName(raw){
   let s = (raw || "").trim();
   if (!s) return "";
-
-    function mapIapLocation(val){
-  if (!val) return "";
+  }
+  function mapIapLocation(val){
+    if (!val) return "";
   const lower = String(val).toLowerCase();
 
   // Sides → add "side"
