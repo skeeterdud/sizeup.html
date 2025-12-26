@@ -172,6 +172,29 @@
       color:#ffffff;
       box-shadow:0 10px 22px rgba(37,99,235,.22);
     }
+/* Small quick-pick buttons */
+.smallGrid{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:8px;
+}
+
+button.chip{
+  border:1px solid rgba(0,0,0,.12);
+  background:#ffffff;
+  color:var(--text);
+  padding:8px 10px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer;
+  user-select:none;
+  box-shadow:0 4px 12px rgba(0,0,0,.10);
+}
+button.chip:active{
+  transform: translateY(1px);
+}
 
     /* Dropdowns */
     .selectRow{
