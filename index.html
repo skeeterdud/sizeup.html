@@ -551,6 +551,41 @@
     return "";
   }
 
+  // ---------- IAP task ordering + sentence-friendly phrasing ----------
+  // This fixes the “tap order” problem and forces logical order (e.g., Water Supply before Attack Line)
+  const IAP_TASK_ORDER = [
+    "Investigate",
+    "Water Supply",
+    "Attack Line",
+    "Rescue",
+    "OEO",
+    "Defensive Op"
+  ];
+
+  function iapTaskSpeak(value){
+    switch (value) {
+      case "Attack Line":   return "taking an attack line";
+      case "Water Supply":  return "setting up water supply";
+      case "Investigate":   return "investigating";
+      case "Rescue":        return "conducting rescue";
+      case "OEO":           return "performing OEO";
+      case "Defensive Op":  return "setting up for defensive operations";
+      default:              return optionPhrase("iapTasks", value) || "";
+    }
+  }
+
+  function orderedIapTasks(){
+    const selected = Array.isArray(state.iapTasks) ? state.iapTasks : [];
+    const orderIndex = new Map(IAP_TASK_ORDER.map((v, i) => [v, i]));
+
+    return selected
+      .slice()
+      .sort((a, b) => (orderIndex.get(a) ?? 999) - (orderIndex.get(b) ?? 999))
+      .map(v => iapTaskSpeak(v))
+      .map(s => (s || "").trim())
+      .filter(Boolean);
+  }
+
   // ---------- UI helpers ----------
 
   function renderButtonGroup(group, parentEl){
@@ -843,7 +878,7 @@
       btn.textContent = v;
       btn.addEventListener("click", () => {
         fstate.confirmStrategy = v;
-        renderScreen();       // 🔹 ensure button highlights
+        renderScreen();       // ensure button highlights
         updateOutputs();
       });
       cGrid.appendChild(btn);
@@ -1162,7 +1197,6 @@
   }
 
   // ---------- Sentence builder ----------
-
   function updateOutputs(){
     // SIZE-UP
     const battalionCode = (state.battalion || "").trim();
@@ -1187,7 +1221,8 @@
     const locFree = (state.problemLocationText || "").trim();
     const locCombined = [quickText, locFree].filter(Boolean).join(", ").trim();
 
-    const tasks = multiList("iapTasks").map(v => optionPhrase("iapTasks", v)).filter(Boolean);
+    // ✅ ORDERED tasks (fixes “tap order” problem)
+    const tasks = orderedIapTasks();
 
     const iapLocPhrase = buildIapLocationPhrase(state.iapLocation, state.iapLocationOther);
 
@@ -1216,10 +1251,15 @@
       `${condition ? ", with " + condition : ""}` +
       `${probPhrase ? " on the " + probPhrase : ""}.`;
 
+    // ✅ Location preposition: “to the alpha side” reads better for sides
+    const locPrefix = iapLocPhrase
+      ? (iapLocPhrase.toLowerCase().includes("side") ? " to the " : " on the ")
+      : "";
+
     const line2 =
       `${apparatus ? apparatus + " " : ""}` +
       `${taskPhrase ? "will be " + taskPhrase : "will be operating"}` +
-      `${iapLocPhrase ? " on the " + iapLocPhrase : ""}` +
+      `${iapLocPhrase ? locPrefix + iapLocPhrase : ""}` +
       `${objPhrase ? " for " + objPhrase : ""}.`;
 
     const line3 =
